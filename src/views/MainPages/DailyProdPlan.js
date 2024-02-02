@@ -119,7 +119,10 @@ const DailyProdPlan = () => {
       }
 
       // Make API call to save data using Axios
-      const response = await axios.post('http://localhost:5001/api/saveproplan', formData)
+      const response = await axios.post(
+        'https://oshiyameatlbackend.onrender.com/api/saveproplan',
+        formData,
+      )
 
       if (response.status === 200) {
         console.log('Data saved successfully:', response.data)
@@ -201,7 +204,7 @@ const DailyProdPlan = () => {
             ))}
           </select>
         </div> */}
-        <div className="col-md-4 mb-3">
+        {/* <div className="col-md-4 mb-3">
           <label className="form-label">Mother Coil SrNo</label>
           <select
             className="form-control"
@@ -210,10 +213,10 @@ const DailyProdPlan = () => {
             style={{ backgroundColor: '#002244', color: 'white' }}
           >
             <option>Select SrNo</option>
-            {/* <option value="half-cut">Half Cut</option>
-            <option value="full-cut">Full Cut</option> */}
+            <option value="half-cut">Half Cut</option>
+            <option value="full-cut">Full Cut</option>
           </select>
-        </div>
+        </div> */}
         <div className="col-md-3">
           <select
             className="form-control"

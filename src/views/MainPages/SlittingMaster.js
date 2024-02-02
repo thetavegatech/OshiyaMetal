@@ -18,7 +18,7 @@ const SlittingMaster = () => {
   useEffect(() => {
     const fetchData1 = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/allSrNos')
+        const response = await axios.get('https://oshiyameatlbackend.onrender.com/api/allSrNos')
         setSrNos(response.data)
       } catch (error) {
         console.error('Error fetching SrNos:', error)
@@ -35,7 +35,9 @@ const SlittingMaster = () => {
 
   const fetchData = async (selected) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/data/srno/${selected}`)
+      const response = await fetch(
+        `https://oshiyameatlbackend.onrender.com/api/data/srno/${selected}`,
+      )
       const result = await response.json()
       setMotherCoilId(result.MotherCoilId || null)
       setWidth(result.Width || null)
@@ -62,7 +64,9 @@ const SlittingMaster = () => {
     const fetchTotalWeightSum = async () => {
       try {
         console.log('API Request Start')
-        const response = await axios.get(`http://localhost:5001/api/getTotalWeight/${MotherCoilId}`)
+        const response = await axios.get(
+          `https://oshiyameatlbackend.onrender.com/api/getTotalWeight/${MotherCoilId}`,
+        )
         console.log('API Request Success', response.data)
         setTotalWeightSum(response.data.totalWeightSum)
         setTotalWidhtSum(response.data.slitWeightSum)
@@ -109,21 +113,24 @@ const SlittingMaster = () => {
       return
     }
     try {
-      const response = await axios.post('http://localhost:5001/api/slittingmaster', {
-        MotherCoilId,
-        SlittingSrNo,
-        GR,
-        GRNO,
-        SlitWidth,
-        NoOfSlit,
-        OdSize,
-        WTMM,
-        SlitWeigth,
-        TotalWeigth,
-        Trimm,
-        Scrap,
-        Yeilds,
-      })
+      const response = await axios.post(
+        'https://oshiyameatlbackend.onrender.com/api/slittingmaster',
+        {
+          MotherCoilId,
+          SlittingSrNo,
+          GR,
+          GRNO,
+          SlitWidth,
+          NoOfSlit,
+          OdSize,
+          WTMM,
+          SlitWeigth,
+          TotalWeigth,
+          Trimm,
+          Scrap,
+          Yeilds,
+        },
+      )
       console.log(response.data)
 
       setSuccessMessage('Data saved successfully!')
@@ -195,7 +202,7 @@ const SlittingMaster = () => {
               ))}
             </select>
           </div>
-          <div className="col-md-4 mb-3">
+          {/* <div className="col-md-4 mb-3">
             <label className="form-label">Sliting Sr No</label>
             <input
               type="number"
@@ -205,9 +212,9 @@ const SlittingMaster = () => {
               id="SlittingSrNo"
               placeholder="Sliting Sr No"
               value={SlittingSrNo}
-              // required
+              required
             />
-          </div>
+          </div> */}
           <div className="col-md-4 mb-3">
             <label className="form-label">Cuts</label>
             <select

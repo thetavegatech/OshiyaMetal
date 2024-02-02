@@ -11,7 +11,9 @@ const DailyProdPlanData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/getdailyproplandata') // Replace with your actual API endpoint
+        const response = await fetch(
+          'https://oshiyameatlbackend.onrender.com/api/getdailyproplandata',
+        ) // Replace with your actual API endpoint
         const result = await response.json()
         setData(result)
         setMotherCoil(result)

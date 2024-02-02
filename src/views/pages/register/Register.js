@@ -37,7 +37,7 @@ const Register = () => {
     e.preventDefault()
 
     try {
-      const response = await axios.post('http://localhost:5001/api/users', {
+      const response = await axios.post('https://oshiyameatlbackend.onrender.com/api/users', {
         name: formData.username,
         email: formData.email,
         password: formData.password,

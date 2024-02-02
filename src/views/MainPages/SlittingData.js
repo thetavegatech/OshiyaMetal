@@ -11,7 +11,9 @@ const SlittingData = () => {
     // Fetch data from your API endpoint
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/getallSlitingdata')
+        const response = await fetch(
+          'https://oshiyameatlbackend.onrender.com/api/getallSlitingdata',
+        )
         const result = await response.json()
         setData(result)
         setSlittingData(result)

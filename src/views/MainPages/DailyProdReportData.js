@@ -214,7 +214,8 @@ const DailyProdReportData = () => {
                   <td>{item.Joint}</td>
                   <td>{item.JointWt}</td>
                   <td>{item.CQ}</td>
-                  <td>{item.CQWt.toFixed(2)}</td>
+                  {/* <td>{item.CQWt.toFixed(2)}</td> */}
+                  <td>{item.CQWt}</td>
                   <td>{item.OdTrim}</td>
                   <td>{item.TestEnd}</td>
                   <td>{item.CoilTrim}</td>
