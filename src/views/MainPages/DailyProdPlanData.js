@@ -53,7 +53,6 @@ const DailyProdPlanData = () => {
       PlanMt: item.PlanMt,
       PrimeNos: item.PrimeNos,
       PrimeWt: item.PrimeWt,
-      Scrap: item.Scrap,
     }))
 
     if (exportData.length === 0) {
@@ -160,7 +159,6 @@ const DailyProdPlanData = () => {
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>PlanMt</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>PrimeNos</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>PrimeWt</th>
-                <th style={{ backgroundColor: '#002244', color: 'white' }}>Scrap</th>
               </tr>
             </thead>
             <tbody>
@@ -181,7 +179,6 @@ const DailyProdPlanData = () => {
                   <td>{item.PlanMt}</td>
                   <td>{item.PrimeNos}</td>
                   <td>{item.PrimeWt}</td>
-                  <td>{item.Scrap}</td>
                 </tr>
               ))}
             </tbody>

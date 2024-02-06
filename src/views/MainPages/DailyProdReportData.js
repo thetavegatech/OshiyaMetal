@@ -11,7 +11,9 @@ const DailyProdReportData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/getdailyproreportdata') // Replace with your actual API endpoint
+        const response = await fetch(
+          'https://oshiyameatlbackend.onrender.com/api/getdailyproreportdata',
+        ) // Replace with your actual API endpoint
         const result = await response.json()
         setData(result)
         setLoading(false)
@@ -65,6 +67,7 @@ const DailyProdReportData = () => {
       ProdFTD: item.ProdFTD,
       Yeilds: item.Yeilds,
       Target: item.Target,
+      Scrap: item.Scrap,
     }))
 
     if (exportData.length === 0) {
@@ -187,6 +190,7 @@ const DailyProdReportData = () => {
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>ProdFTD</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Yeilds%</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Target</th>
+                <th style={{ backgroundColor: '#002244', color: 'white' }}>Scrap</th>
               </tr>
             </thead>
             <tbody>
@@ -222,6 +226,7 @@ const DailyProdReportData = () => {
                   <td>{item.ProdFTD}</td>
                   <td>{item.Yeilds}%</td>
                   <td>{item.Target}</td>
+                  <td>{item.Scrap}</td>
                 </tr>
               ))}
             </tbody>

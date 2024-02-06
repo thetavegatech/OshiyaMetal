@@ -31,6 +31,7 @@ const DailyProdReport = () => {
   const [prodFTD, setProdFTD] = useState('')
   const [yeilds, setYeilds] = useState('')
   const [target, setTarget] = useState('')
+  const [Scrap, setScrap] = useState('')
 
   useEffect(() => {
     const OD = parseFloat(od) || 0
@@ -108,10 +109,14 @@ const DailyProdReport = () => {
         Yeilds: yeilds,
         Target: target,
         Date: date,
+        Scrap: Scrap,
       }
 
       // Make API call to save data using Axios
-      const response = await axios.post('http://localhost:5001/api/saveproreport', formData)
+      const response = await axios.post(
+        'https://oshiyameatlbackend.onrender.com/api/saveproreport',
+        formData,
+      )
 
       if (response.status === 200) {
         console.log('Data saved successfully:', response.data)
@@ -145,6 +150,7 @@ const DailyProdReport = () => {
         setYeilds('')
         setTarget('')
         setDate('')
+        setScrap('')
 
         // Display success message
         alert('Plan added successfully')
@@ -584,6 +590,20 @@ const DailyProdReport = () => {
                 placeholder="Target"
                 value={target}
                 onChange={(e) => setTarget(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="col-md-4">
+            <div className="mb-3">
+              <label className="form-label">Scrap</label>
+              <input
+                type="number"
+                className="form-control"
+                name="Scrap"
+                id="Scrap"
+                required
+                value={Scrap}
+                onChange={(e) => setScrap(e.target.value)}
               />
             </div>
           </div>

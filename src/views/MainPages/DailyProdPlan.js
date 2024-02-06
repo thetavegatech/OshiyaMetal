@@ -452,22 +452,6 @@ const DailyProdPlan = () => {
             </div>
           </div>
         </div>
-        <div className="row">
-          <div className="col-md-4">
-            <div className="mb-3">
-              <label className="form-label">Scrap</label>
-              <input
-                type="number"
-                className="form-control"
-                name="Scrap"
-                id="Scrap"
-                required
-                value={Scrap}
-                onChange={(e) => setScrap(e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
 
         <div className="row">
           <div className="col-md-4">
