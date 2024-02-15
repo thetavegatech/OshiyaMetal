@@ -11,9 +11,60 @@ const SlittingMaster = () => {
 
   const [MotherCoilId, setMotherCoilId] = useState(null)
   const [Width, setWidth] = useState(null)
-  const [Thickness, setThickness] = useState(null)
+  const [Thickness, setThickness] = useState()
   const [Weigth, setWeigth] = useState(null)
   const [SlittingSrNo, setSlittingSrNo] = useState(null)
+  const [submittedFormData, setSubmittedFormData] = useState([])
+
+  const [od, setod] = useState([
+    { SlitWidth: 41.3, Thickness: 1.2, OdSize: 41.3 },
+    { SlitWidth: 41.3, Thickness: 1.63, OdSize: 43.3 },
+    { SlitWidth: 41.3, Thickness: 2, OdSize: 42.3 },
+    { SlitWidth: 41.3, Thickness: 2.5, OdSize: 41.3 },
+    { SlitWidth: 41.3, Thickness: 3, OdSize: 41.3 },
+  ])
+
+  const [selectedSlitWidth, setSelectedSlitWidth] = useState('')
+  const [selectedThickness, setSelectedThickness] = useState('')
+
+  // const updateOdSize = (slitWidth, thickness) => {
+  //   const matchedUser = users.find(
+  //     (user) => user.SlitWidth === slitWidth && user.Thickness === thickness,
+  //   )
+  //   if (matchedUser) {
+  //     setOdSize(matchedUser.OdSize)
+  //   } else {
+  //     setOdSize('') // Reset OdSize if no match is found
+  //   }
+  // }
+  const handleSlitWidthChange = (value) => {
+    setSelectedSlitWidth(value)
+    updateOdSize(value, Thickness)
+  }
+
+  useEffect(() => {
+    if (selectedSrNo && selectedSlitWidth && Thickness) {
+      updateOdSize(selectedSlitWidth, Thickness)
+    }
+  }, [selectedSrNo, selectedSlitWidth, Thickness])
+
+  const updateOdSize = (slitWidth, thickness) => {
+    const matchedUser = od.find(
+      (user) =>
+        user.SlitWidth === parseFloat(slitWidth) && user.Thickness === parseFloat(thickness),
+    )
+    if (matchedUser) {
+      setOdSize(matchedUser.OdSize.toString())
+    } else {
+      setOdSize('') // Reset OdSize if no match is found
+    }
+  }
+
+  useEffect(() => {
+    if (selectedSrNo && selectedSlitWidth && Thickness) {
+      updateOdSize(selectedSlitWidth, Thickness)
+    }
+  }, [selectedSrNo, selectedSlitWidth, Thickness])
 
   useEffect(() => {
     const fetchData1 = async () => {
@@ -94,6 +145,7 @@ const SlittingMaster = () => {
   const [Scrap, setScrap] = useState('')
   const [Yeilds, setYeilds] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
+  const [submittedData, setSubmittedData] = useState([])
 
   useEffect(() => {
     const coilWeigth = parseFloat(NoOfSlit) || 0
@@ -115,23 +167,38 @@ const SlittingMaster = () => {
     try {
       const response = await axios.post(
         'https://oshiyameatlbackend.onrender.com/api/slittingmaster',
+        setSubmittedData((prevData) => [
+          ...prevData,
+          {
+            MotherCoilId,
+            SlittingSrNo,
+            GR,
+            GRNO,
+            SlitWidth: selectedSlitWidth,
+            NoOfSlit,
+            OdSize,
+            WTMM,
+            SlitWeigth,
+            TotalWeigth,
+            Trimm,
+            Scrap,
+            Yeilds,
+          },
+        ]),
+      )
+      console.log(response.data)
+
+      setSubmittedFormData((prevData) => [
+        ...prevData,
         {
-          MotherCoilId,
-          SlittingSrNo,
-          GR,
-          GRNO,
           SlitWidth,
           NoOfSlit,
           OdSize,
           WTMM,
           SlitWeigth,
           TotalWeigth,
-          Trimm,
-          Scrap,
-          Yeilds,
         },
-      )
-      console.log(response.data)
+      ])
 
       setSuccessMessage('Data saved successfully!')
       setTimeout(() => {
@@ -142,6 +209,13 @@ const SlittingMaster = () => {
         setWidth(null)
         setThickness(null)
         setWeigth(null)
+
+        setSelectedSlitWidth('')
+        setNoOfSlit('')
+        setOdSize('')
+        setWTMM('')
+        setSlitWeigth('')
+
         e.target.reset()
       }, 1000)
       // Handle success, clear form, show success message, etc.
@@ -149,6 +223,17 @@ const SlittingMaster = () => {
       console.error('Error saving data:', error)
       // Handle error, show error message, etc.
     }
+  }
+
+  const handleReset = () => {
+    // Reset the state for the second form
+    setSlitWidth('')
+    setNoOfSlit('')
+    setOdSize('')
+    setWTMM('')
+    setSlitWeigth('')
+    setTotalWeigth('')
+    setSelectedSlitWidth('')
   }
 
   // const remainWeigth = (Weigth !== null && totalWeightSum !== null ) ? (Weigth - totalWeightSum).toFixed(2) : ''
@@ -177,13 +262,33 @@ const SlittingMaster = () => {
     const newValue = event.target.value
     setSelectedValue(newValue)
     console.log('Selected Value:', newValue)
+    if (newValue === 'half-cut') {
+      updateOdSize(41.3, 2) // Example values, replace with your actual values
+    } else if (newValue === 'full-cut') {
+      updateOdSize(41.3, 3) // Example values, replace with your actual values
+    }
   }
+
+  // if () {
+  //   updateOdSize(41.3, 2) // Example values, replace with your actual values
+  // } else if (newValue === 'full-cut') {
+  //   updateOdSize(41.3, 3) // Example values, replace with your actual values
+  // }
 
   return (
     <div>
       <h4 style={{ marginBottom: '1rem', color: '#002244' }}>Slitting Master</h4>
       {/* {successMessage && <div className="alert alert-success">{successMessage}</div>} */}
-      <form onSubmit={handleSubmit} style={{ marginBottom: '2rem' }}>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          marginBottom: '2rem',
+          border: '1px solid #ccc',
+          padding: '20px',
+          borderRadius: '10px',
+          margin: '20px',
+        }}
+      >
         <div className="row">
           <div className="col-md-4 mb-3">
             <label className="form-label">Sr No</label>
@@ -216,6 +321,19 @@ const SlittingMaster = () => {
             />
           </div> */}
           <div className="col-md-4 mb-3">
+            <label className="form-label">Mother Coil No</label>
+            <input
+              type="number"
+              step="any"
+              className="form-control"
+              name="MotherCoilId"
+              id="MotherCoilId"
+              placeholder="Mother Coil No"
+              value={MotherCoilId}
+              required
+            />
+          </div>
+          <div className="col-md-4 mb-3">
             <label className="form-label">Cuts</label>
             <select
               className="form-control"
@@ -230,7 +348,7 @@ const SlittingMaster = () => {
           </div>
         </div>
         <div className="row">
-          <div className="col-md-4 mb-3">
+          {/* <div className="col-md-4 mb-3">
             <label className="form-label">Mother Coil No</label>
             <input
               type="number"
@@ -242,8 +360,8 @@ const SlittingMaster = () => {
               value={MotherCoilId}
               required
             />
-          </div>
-          <div className="col-md-4 mb-3">
+          </div> */}
+          {/* <div className="col-md-4 mb-3">
             <label className="form-label">GR</label>
             <input
               type="text"
@@ -266,10 +384,10 @@ const SlittingMaster = () => {
               placeholder="GRNO"
               onChange={(e) => setGRNO(e.target.value)}
             />
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-md-4 mb-3">
+          </div> */}
+          {/* </div> */}
+          {/* <div className="row"> */}
+          {/* <div className="col-md-4 mb-3">
             <label className="form-label">CoilWidth</label>
             <input
               type="text"
@@ -280,8 +398,8 @@ const SlittingMaster = () => {
               placeholder="CoilWidth"
               value={Width}
             />
-          </div>
-          <div className="col-md-4 mb-3">
+          </div>*/}
+          {/* <div className="col-md-4 mb-3">
             <label className="form-label">CoilWeigth</label>
             <input
               type="text"
@@ -292,7 +410,7 @@ const SlittingMaster = () => {
               placeholder="CoilWeigth"
               value={Weigth}
             />
-          </div>
+          </div> */}
 
           <div className="col-md-4 mb-3">
             <label className="form-label">Thickness</label>
@@ -304,6 +422,8 @@ const SlittingMaster = () => {
               id="Thickness"
               placeholder="Thickness"
               value={Thickness}
+              // onChange={(e) => setThickness(e.target.value)}
+              required
             />
           </div>
           <div className="col-md-4 mb-3">
@@ -359,7 +479,18 @@ const SlittingMaster = () => {
             />
           </div>
         </div>
+      </form>
 
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          marginBottom: '2rem',
+          border: '1px solid #ccc',
+          padding: '20px',
+          borderRadius: '10px',
+          margin: '20px',
+        }}
+      >
         <div className="row mt-5">
           <div className="col-md-4 mb-3">
             <label className="form-label">SlitWidth</label>
@@ -370,7 +501,8 @@ const SlittingMaster = () => {
               name="SlitWidth"
               id="SlitWidth"
               placeholder="SlitWidth"
-              onChange={(e) => setSlitWidth(e.target.value)}
+              value={selectedSlitWidth}
+              onChange={(e) => handleSlitWidthChange(e.target.value)}
               required
             />
           </div>
@@ -396,6 +528,7 @@ const SlittingMaster = () => {
               name="OdSize"
               id="OdSize"
               placeholder="OdSize"
+              value={OdSize} // <-- Use OdSize instead of od
               onChange={(e) => setOdSize(e.target.value)}
               required
             />
@@ -441,7 +574,7 @@ const SlittingMaster = () => {
               required
             />
           </div>
-          <div className="col-md-4 mb-3">
+          {/* <div className="col-md-4 mb-3">
             <label className="form-label">Trimm</label>
             <input
               type="text"
@@ -453,8 +586,8 @@ const SlittingMaster = () => {
               onChange={(e) => setTrimm(e.target.value)}
               required
             />
-          </div>
-          <div className="col-md-4 mb-3">
+          </div> */}
+          {/* <div className="col-md-4 mb-3">
             <label className="form-label">Scrap</label>
             <input
               type="text"
@@ -466,8 +599,8 @@ const SlittingMaster = () => {
               onChange={(e) => setScrap(e.target.value)}
               required
             />
-          </div>
-          <div className="col-md-4 mb-3">
+          </div> */}
+          {/* <div className="col-md-4 mb-3">
             <label className="form-label">Yeilds</label>
             <input
               type="text"
@@ -479,7 +612,7 @@ const SlittingMaster = () => {
               onChange={(e) => setYeilds(e.target.value)}
               required
             />
-          </div>
+          </div> */}
         </div>
         <div className="row">
           <div className="col-md-4">
@@ -491,13 +624,80 @@ const SlittingMaster = () => {
                 color: 'white',
                 paddingLeft: '3rem',
                 paddingRight: '3rem',
+                marginRight: '1rem',
               }}
+              // onClick={handleAddAnother}
             >
-              Save
+              Add
+            </button>
+          </div>
+          <div className="col-md-4">
+            <button
+              type="reset"
+              className="btn"
+              style={{
+                backgroundColor: '#002244',
+                color: 'white',
+                paddingLeft: '5rem',
+                paddingRight: '5rem',
+                marginRight: '5rem',
+              }}
+              onClick={handleReset}
+            >
+              Reset
             </button>
           </div>
         </div>
       </form>
+      <div style={{ marginLeft: '2rem' }}>
+        <button
+          type="submit"
+          className="btn"
+          style={{
+            backgroundColor: '#002244',
+            color: 'white',
+            paddingLeft: '5rem',
+            paddingRight: '5rem',
+            marginRight: '5rem',
+          }}
+        >
+          Save
+        </button>
+      </div>
+
+      <div>
+        {/* ... (other code) */}
+        {/* Step 4: Render a table to display submitted data */}
+        {submittedData.length > 0 && (
+          <div>
+            <h4 style={{ marginTop: '2rem', color: '#002244' }}>Submitted Data</h4>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th style={{ backgroundColor: '#002244', color: 'white' }}>Slit Width</th>
+                  <th style={{ backgroundColor: '#002244', color: 'white' }}>No of Slit</th>
+                  <th style={{ backgroundColor: '#002244', color: 'white' }}>Od Size</th>
+                  <th style={{ backgroundColor: '#002244', color: 'white' }}>WT/MM</th>
+                  <th style={{ backgroundColor: '#002244', color: 'white' }}>Slit Weight</th>
+                  <th style={{ backgroundColor: '#002244', color: 'white' }}>Total Weight</th>
+                </tr>
+              </thead>
+              <tbody>
+                {submittedData.map((data, index) => (
+                  <tr key={index}>
+                    <td>{data.SlitWidth}</td>
+                    <td>{data.NoOfSlit}</td>
+                    <td>{data.OdSize}</td>
+                    <td>{data.WTMM}</td>
+                    <td>{data.SlitWeigth}</td>
+                    <td>{data.TotalWeigth.toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
       {successMessage && <div className="alert alert-success">{successMessage}</div>}
     </div>
   )
