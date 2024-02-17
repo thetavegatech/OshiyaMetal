@@ -15,9 +15,7 @@ const MotherCoilMaster = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          'https://oshiyameatlbackend.onrender.com/api/getallmothercoildata',
-        )
+        const response = await axios.get('http://localhost:5001/api/getallmothercoildata')
         setData(response.data)
         setMotherCoil(response.data)
         setSlittingData(response.data)
@@ -42,11 +40,15 @@ const MotherCoilMaster = () => {
     const Width = e.target.Width.value
     const Thickness = e.target.Thickness.value
     const Weigth = e.target.Weigth.value
+    const ActualCoilWidth = e.target.ActualCoilWidth.value
+    const ActualCoilWeigth = e.target.ActualCoilWeigth.value
+    const Grade = e.target.Grade.value
+    const CoilType = e.target.CoilType.value
     const RemainingWeigth = 0
     const UsedWeigth = 0
 
     axios
-      .post('https://oshiyameatlbackend.onrender.com/api/mothercoils', {
+      .post('http://localhost:5001/api/mothercoils', {
         MotherCoilId: MotherCoilId,
         SrNo: SrNo,
         CompanyName: CompanyName,
@@ -55,6 +57,10 @@ const MotherCoilMaster = () => {
         Weigth: Weigth,
         RemainingWeigth: RemainingWeigth,
         UsedWeigth: UsedWeigth,
+        ActualCoilWidth: ActualCoilWidth,
+        ActualCoilWeigth: ActualCoilWeigth,
+        Grade: Grade,
+        CoilType: CoilType,
       })
       .then((response) => {
         console.log(response)
@@ -62,10 +68,8 @@ const MotherCoilMaster = () => {
 
         const fetchData = async () => {
           try {
-            const response = await axios.get(
-              'https://oshiyameatlbackend.onrender.com/api/getallmothercoildata',
-            )
-            setData(response.data)
+            const response = await axios.get('http://localhost:5001/api/getallmothercoildata')
+            setSlittingData(response.data)
           } catch (error) {
             console.error('Error fetching data:', error)
           }
@@ -204,14 +208,11 @@ const MotherCoilMaster = () => {
           </div>
           <div className="col-md-4 mb-3">
             <label className="form-label">Thickness</label>
-            <input
-              type="text"
-              className="form-control"
-              name="Thickness"
-              id="Thickness"
-              required
-              placeholder="Thickness"
-            />
+            <select className="form-control" name="Thickness" id="Thickness" required>
+              <option>Select Thickness</option>
+              <option value="2.00">2.00</option>
+              <option value="1.20">1.20</option>
+            </select>
           </div>
           <div className="col-md-4 mb-3">
             <label className="form-label">Weigth</label>
@@ -224,7 +225,65 @@ const MotherCoilMaster = () => {
               required
             />
           </div>
+          <div className="col-md-4 mb-3">
+            <label className="form-label">Actual CoilWidth</label>
+            <input
+              type="text"
+              step="any"
+              className="form-control"
+              name="ActualCoilWidth"
+              id="ActualCoilWidth"
+              placeholder="Actual CoilWidth"
+              // value={remainWidth}
+              // value={Thickness}
+            />
+          </div>
+          <div className="col-md-4 mb-3">
+            <label className="form-label">Actual CoilWeigth</label>
+            <input
+              type="text"
+              step="any"
+              className="form-control"
+              name="ActualCoilWeigth"
+              id="ActualCoilWeigth"
+              placeholder="Actual CoilWeigth"
+              // value={remainWidth}
+              // value={Thickness}
+            />
+          </div>
+          <div className="col-md-4 mb-3">
+            <label className="form-label">Grade</label>
+            <input
+              type="text"
+              step="any"
+              className="form-control"
+              name="Grade"
+              id="Grade"
+              placeholder="Grade"
+              // onChange={(e) => setGR(e.target.value)}
+            />
+          </div>
+          <div className="col-md-4 mb-3">
+            <label className="form-label">Coil Type</label>
+            <select
+              className="form-control"
+              name="CoilType"
+              id="CoilType"
+              // placeholder="Coil type"
+              // onChange={(e) => setGRNO(e.target.value)}
+            >
+              <option value="" disabled selected>
+                Select Coil Type
+              </option>
+
+              <option value="HR">HR</option>
+              <option value="Option1">CR</option>
+              <option value="Option2">GP</option>
+              <option value="Option3">CRPO</option>
+            </select>
+          </div>
         </div>
+
         <div className="row">
           <div className="col-md-4">
             <button
@@ -328,11 +387,13 @@ const MotherCoilMaster = () => {
             <thead className="table-dark">
               <tr>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>MotherCoilId</th>
-                <th style={{ backgroundColor: '#002244', color: 'white' }}>SrNo</th>
+                {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>SrNo</th> */}
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>CompanyName</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Width</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Thickness</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Weigth</th>
+                <th style={{ backgroundColor: '#002244', color: 'white' }}>ActualCoilWidth</th>
+                <th style={{ backgroundColor: '#002244', color: 'white' }}>ActualCoilWeigth</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Date</th>
               </tr>
             </thead>
@@ -340,11 +401,13 @@ const MotherCoilMaster = () => {
               {slittingData.map((coil) => (
                 <tr key={coil._id}>
                   <td>{coil.MotherCoilId}</td>
-                  <td>{coil.SrNo}</td>
+                  {/* <td>{coil.SrNo}</td> */}
                   <td>{coil.CompanyName}</td>
                   <td>{coil.Width}</td>
                   <td>{coil.Thickness}</td>
                   <td>{coil.Weigth}</td>
+                  <td>{coil.ActualCoilWidth}</td>
+                  <td>{coil.ActualCoilWeigth}</td>
                   <td>{formatDate(coil.Date)}</td>
                 </tr>
               ))}

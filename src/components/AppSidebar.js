@@ -238,10 +238,10 @@ const AppSidebar = () => {
                   <CIcon customClassName="nav-icon" icon={cilSpeedometer} />
                   Dashboard
                 </CNavItem>
-                <CNavItem component={NavLink} to="/weigthmaster">
+                {/* <CNavItem component={NavLink} to="/weigthmaster">
                   <CIcon customClassName="nav-icon" icon={cilSpeedometer} />
                   Weigthmaster
-                </CNavItem>
+                </CNavItem> */}
                 <CNavItem component={NavLink} to="/mothercoil">
                   <CIcon customClassName="nav-icon" icon={cilSpeedometer} />
                   MotherCoil Master
@@ -250,26 +250,26 @@ const AppSidebar = () => {
                   <CIcon customClassName="nav-icon" icon={cilSpeedometer} />
                   Slitting Master
                 </CNavItem>
-                <CNavItem component={NavLink} to="/slittingdata">
+                {/* <CNavItem component={NavLink} to="/slittingdata">
                   <CIcon customClassName="nav-icon" icon={cilSpeedometer} />
                   Slitting Data
-                </CNavItem>
+                </CNavItem> */}
                 <CNavItem component={NavLink} to="/dailyprodplan">
                   <CIcon customClassName="nav-icon" icon={cilSpeedometer} />
                   Daily Production Plan
                 </CNavItem>
-                <CNavItem component={NavLink} to="/dailyprodplandata">
+                {/* <CNavItem component={NavLink} to="/dailyprodplandata">
                   <CIcon customClassName="nav-icon" icon={cilSpeedometer} />
                   Daily Production Plan Data
-                </CNavItem>
+                </CNavItem> */}
                 <CNavItem component={NavLink} to="/dailyprodreport">
                   <CIcon customClassName="nav-icon" icon={cilSpeedometer} />
                   Daily Production Report
                 </CNavItem>
-                <CNavItem component={NavLink} to="/dailyprodreportdata">
+                {/* <CNavItem component={NavLink} to="/dailyprodreportdata">
                   <CIcon customClassName="nav-icon" icon={cilSpeedometer} />
                   Daily Prod Report Data
-                </CNavItem>
+                </CNavItem> */}
               </>
             )
           } else if (userrole === 'production') {

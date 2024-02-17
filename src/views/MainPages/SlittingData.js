@@ -11,9 +11,7 @@ const SlittingData = () => {
     // Fetch data from your API endpoint
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          'https://oshiyameatlbackend.onrender.com/api/getallSlitingdata',
-        )
+        const response = await fetch('http://localhost:5001/api/getallSlitingdata')
         const result = await response.json()
         setData(result)
         setSlittingData(result)
@@ -152,7 +150,7 @@ const SlittingData = () => {
               <td>{item.OdSize}</td>
               <td>{item.WTMM}</td>
               <td>{item.SlitWeigth}</td>
-              <td>{item.TotalWeigth.toFixed(2)}</td>
+              <td>{item.TotalWeigth}</td>
               <td>{item.Trimm}</td>
               {/* <td>{item.Scrap}</td>
               <td>{item.Yeilds}</td> */}

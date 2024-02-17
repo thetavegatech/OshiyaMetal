@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import { NavLink } from 'react-router-dom'
 
 const DailyProdReport = () => {
   const [date, setDate] = useState('')
@@ -166,8 +167,39 @@ const DailyProdReport = () => {
 
   return (
     <div>
-      <h4 style={{ marginBottom: '1rem', color: '#002244' }}>Daily Production Report</h4>
-      <form onSubmit={handleSubmit}>
+      <div className="row">
+        <div className="col-3">
+          <h4 style={{ marginBottom: '1rem', color: '#002244' }}>Daily Production Report</h4>
+        </div>
+        <div className="col-3">
+          <NavLink to="/dailyprodreportdata">
+            <button
+              type="submit"
+              className="form-control"
+              // className="btn"
+              style={{
+                backgroundColor: '#002244',
+                color: 'white',
+                marginLeft: '35rem',
+                // paddingLeft: '3rem',
+                // paddingRight: '3rem',
+              }}
+            >
+              Report Data
+            </button>
+          </NavLink>
+        </div>
+      </div>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          marginBottom: '2rem',
+          border: '1px solid #ccc',
+          padding: '20px',
+          borderRadius: '10px',
+          margin: '20px',
+        }}
+      >
         <div className="row">
           <div className="col-md-4">
             <div className="mb-3">
@@ -301,7 +333,7 @@ const DailyProdReport = () => {
           </div>
         </div>
         <div className="row">
-          <div className="col-md-4">
+          {/* <div className="col-md-4">
             <div className="mb-3">
               <label className="form-label">TimeAvailable</label>
               <input
@@ -314,8 +346,8 @@ const DailyProdReport = () => {
                 onChange={(e) => setTimeAvailable(e.target.value)}
               />
             </div>
-          </div>
-          <div className="col-md-4">
+          </div> */}
+          {/* <div className="col-md-4">
             <div className="mb-3">
               <label className="form-label">TimeRequired</label>
               <input
@@ -328,7 +360,7 @@ const DailyProdReport = () => {
                 onChange={(e) => setTimeRequired(e.target.value)}
               />
             </div>
-          </div>
+          </div> */}
           <div className="col-md-4">
             <div className="mb-3">
               <label className="form-label">SlitNos</label>

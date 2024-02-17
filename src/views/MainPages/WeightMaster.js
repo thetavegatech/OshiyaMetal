@@ -25,7 +25,7 @@ const WeightMaster = () => {
     e.preventDefault()
 
     axios
-      .post('https://oshiyameatlbackend.onrender.com/api/weightmaster', {
+      .post('http://localhost:5001/api/weightmaster', {
         RST,
         EnterDate,
         VehicalName,
@@ -43,9 +43,7 @@ const WeightMaster = () => {
         resetForm()
         const fetchData = async () => {
           try {
-            const response = await fetch(
-              'https://oshiyameatlbackend.onrender.com/api/getweightdata',
-            )
+            const response = await fetch('http://localhost:5001/api/getweightdata')
             const result = await response.json()
             setData(result)
           } catch (error) {
@@ -75,7 +73,7 @@ const WeightMaster = () => {
     // Fetch data from your API endpoint
     const fetchData = async () => {
       try {
-        const response = await fetch('https://oshiyameatlbackend.onrender.com/api/getweightdata')
+        const response = await fetch('http://localhost:5001/api/getweightdata')
         const result = await response.json()
         setData(result)
       } catch (error) {
@@ -133,7 +131,7 @@ const WeightMaster = () => {
               />
             </div>
           </div>
-          <div className="col-md-4">
+          {/* <div className="col-md-4">
             <div className="mb-3">
               <label className="form-label">Date</label>
               <input
@@ -258,7 +256,7 @@ const WeightMaster = () => {
               />
             </div>
           </div> */}
-          <div className="col-md-4">
+          {/* <div className="col-md-4">
             <div className="mb-3">
               <label className="form-label" htmlFor="attachment">
                 Attachment:
@@ -271,7 +269,7 @@ const WeightMaster = () => {
                 onChange={convertToBse64}
               ></input>
             </div>
-          </div>
+          </div>*/}
         </div>
 
         <div className="row">

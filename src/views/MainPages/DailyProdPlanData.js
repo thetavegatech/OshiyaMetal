@@ -11,9 +11,7 @@ const DailyProdPlanData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          'https://oshiyameatlbackend.onrender.com/api/getdailyproplandata',
-        ) // Replace with your actual API endpoint
+        const response = await fetch('http://localhost:5001/api/getdailyproplandata') // Replace with your actual API endpoint
         const result = await response.json()
         setData(result)
         setMotherCoil(result)
@@ -155,10 +153,10 @@ const DailyProdPlanData = () => {
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>ProdHr</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>TimeAvailable</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>TimeRequired</th>
-                <th style={{ backgroundColor: '#002244', color: 'white' }}>SlitNos</th>
+                {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>SlitNos</th> */}
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>PlanMt</th>
-                <th style={{ backgroundColor: '#002244', color: 'white' }}>PrimeNos</th>
-                <th style={{ backgroundColor: '#002244', color: 'white' }}>PrimeWt</th>
+                <th style={{ backgroundColor: '#002244', color: 'white' }}>Role Change Time</th>
+                {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>PrimeWt</th> */}
               </tr>
             </thead>
             <tbody>
@@ -166,7 +164,7 @@ const DailyProdPlanData = () => {
                 <tr key={item._id.$oid}>
                   <td>{new Date(item.Date).toLocaleDateString()}</td>
                   <td>{item.Size}</td>
-                  <td>{item.Od}</td>
+                  <td>{item.odSize}</td>
                   <td>{item.Thick}</td>
                   <td>{item.Length}</td>
                   <td>{item.Gr}</td>
@@ -175,10 +173,10 @@ const DailyProdPlanData = () => {
                   <td>{item.ProdHr}</td>
                   <td>{item.TimeAvailable}</td>
                   <td>{item.TimeRequired}</td>
-                  <td>{item.SlitNos}</td>
+                  {/* <td>{item.SlitNos}</td> */}
                   <td>{item.PlanMt}</td>
-                  <td>{item.PrimeNos}</td>
-                  <td>{item.PrimeWt}</td>
+                  <td>{item.rolechangetime}</td>
+                  {/* <td>{item.PrimeWt}</td> */}
                 </tr>
               ))}
             </tbody>
