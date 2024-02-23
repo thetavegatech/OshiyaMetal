@@ -65,7 +65,9 @@ const DailyProdReport = () => {
     // Fetch production plan numbers when the component mounts
     const fetchProductionPlanNos = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/getProductionPlanNos')
+        const response = await axios.get(
+          'https://oshiyameatlbackend.onrender.com/api/getProductionPlanNos',
+        )
         setProductionPlanNos(response.data) // Assuming the API returns an array of production plan numbers
       } catch (error) {
         console.error('Error fetching production plan numbers:', error)
@@ -79,7 +81,9 @@ const DailyProdReport = () => {
     // Fetch combined IDs when the component mounts
     const fetchCombinedIds = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/getCombinedIds')
+        const response = await axios.get(
+          'https://oshiyameatlbackend.onrender.com/api/getCombinedIds',
+        )
         setCombinedIds(response.data) // Assuming the API returns an array of combined IDs
       } catch (error) {
         console.error('Error fetching combined IDs:', error)
@@ -110,7 +114,7 @@ const DailyProdReport = () => {
     try {
       // Make API call to fetch data based on the selected combined ID
       const response = await axios.get(
-        `http://localhost:5001/api/getEntryByCombinedId/${combinedId}`,
+        `https://oshiyameatlbackend.onrender.com/api/getEntryByCombinedId/${combinedId}`,
       )
 
       // Update state with the fetched data
@@ -127,7 +131,9 @@ const DailyProdReport = () => {
 
     try {
       // Make API call to fetch data based on the selected productionPlanNo
-      const response = await axios.get(`http://localhost:5001/api/dailyproplan/${productionPlanNo}`)
+      const response = await axios.get(
+        `https://oshiyameatlbackend.onrender.com/api/dailyproplan/${productionPlanNo}`,
+      )
       const {
         Size,
         odSize,
@@ -295,7 +301,10 @@ const DailyProdReport = () => {
       }
 
       // Make API call to save data using Axios
-      const response = await axios.post('http://localhost:5001/api/saveproreport', formData)
+      const response = await axios.post(
+        'https://oshiyameatlbackend.onrender.com/api/saveproreport',
+        formData,
+      )
 
       if (response.status === 200) {
         console.log('Data saved successfully:', response.data)
@@ -370,13 +379,15 @@ const DailyProdReport = () => {
       </div>
       <form
         onSubmit={handleSubmit}
-        style={{
-          marginBottom: '2rem',
-          border: '1px solid #ccc',
-          padding: '20px',
-          borderRadius: '10px',
-          margin: '20px',
-        }}
+        style={
+          {
+            // marginBottom: '2rem',
+            // border: '1px solid #ccc',
+            // padding: '20px',
+            // borderRadius: '10px',
+            // margin: '20px',
+          }
+        }
       >
         <div className="row">
           <div className="col-md-4">
