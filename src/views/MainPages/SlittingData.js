@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import * as XLSX from 'xlsx'
+import { NavLink } from 'react-router-dom'
 
 const SlittingData = () => {
   const [data, setData] = useState([])
@@ -8,13 +9,15 @@ const SlittingData = () => {
   const [slittingData, setSlittingData] = useState([])
 
   useEffect(() => {
-    // Fetch data from your API endpoint
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/getallSlitingdata')
+        const response = await fetch('http://localhost:5001/api/getEntries')
         const result = await response.json()
-        setData(result)
-        setSlittingData(result)
+
+        // Assuming each entry is nested within an "entries" property
+        const entries = result.map((item) => item.entries).flat()
+        setData(entries)
+        setSlittingData(entries)
       } catch (error) {
         console.error('Error fetching data:', error)
       }
@@ -38,6 +41,7 @@ const SlittingData = () => {
       SlitWeigth: item.SlitWeigth,
       TotalWeigth: item.TotalWeigth,
       Trimm: item.TotalWeigth,
+      remainingWeight: item.remainingWeight,
     }))
 
     if (exportData.length === 0) {
@@ -124,15 +128,19 @@ const SlittingData = () => {
           <tr>
             <th style={{ backgroundColor: '#002244', color: 'white' }}>MotherCoil No</th>
             {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>Slitting Sr No</th> */}
-            <th style={{ backgroundColor: '#002244', color: 'white' }}>GR</th>
-            <th style={{ backgroundColor: '#002244', color: 'white' }}>GRNO</th>
-            <th style={{ backgroundColor: '#002244', color: 'white' }}>Slit Width</th>
-            <th style={{ backgroundColor: '#002244', color: 'white' }}>No of Slit</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>combinedId</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>SlitWidth</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>NoOfSlit </th>
+            {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>No of Slit</th> */}
             <th style={{ backgroundColor: '#002244', color: 'white' }}>Od Size</th>
             <th style={{ backgroundColor: '#002244', color: 'white' }}>WT/MM</th>
             <th style={{ backgroundColor: '#002244', color: 'white' }}>Slit Weight</th>
             <th style={{ backgroundColor: '#002244', color: 'white' }}>Total Weight</th>
             <th style={{ backgroundColor: '#002244', color: 'white' }}>Trimm</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>Scrap</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>SlitCut</th>
+            {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>remaining weight</th> */}
+
             {/* <th>Scrap</th>
             <th>Yields</th> */}
             {/* <th>Date</th> */}
@@ -142,9 +150,7 @@ const SlittingData = () => {
           {slittingData.map((item) => (
             <tr key={item._id}>
               <td>{item.MotherCoilId}</td>
-              {/* <td>{item.SlittingSrNo}</td> */}
-              <td>{item.GR}</td>
-              <td>{item.GRNO}</td>
+              <td>{item.combinedId}</td>
               <td>{item.SlitWidth}</td>
               <td>{item.NoOfSlit}</td>
               <td>{item.OdSize}</td>
@@ -152,9 +158,14 @@ const SlittingData = () => {
               <td>{item.SlitWeigth}</td>
               <td>{item.TotalWeigth}</td>
               <td>{item.Trimm}</td>
-              {/* <td>{item.Scrap}</td>
-              <td>{item.Yeilds}</td> */}
-              {/* <td>{new Date(item.Date).toLocaleString()}</td> */}
+              <td>{item.Scrap}</td>
+              <td>{item.Slitcut}</td>
+              {/* <td>{item.remainingWeightValue}</td> */}
+              {/* <td>
+                <NavLink to={`/editdailyplan/${item._id}`}>
+                  <span>Edit</span>
+                </NavLink>
+              </td> */}
             </tr>
           ))}
         </tbody>

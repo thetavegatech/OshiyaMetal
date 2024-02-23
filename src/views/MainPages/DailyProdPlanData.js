@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import * as XLSX from 'xlsx'
+import { NavLink } from 'react-router-dom'
 
 const DailyProdPlanData = () => {
   const [data, setData] = useState([])
@@ -142,41 +143,61 @@ const DailyProdPlanData = () => {
           <table className="table table-bordered table-hover">
             <thead className="table-dark">
               <tr>
+                <th style={{ backgroundColor: '#002244', color: 'white' }}>Plant</th>
+                <th style={{ backgroundColor: '#002244', color: 'white' }}>Plan No</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Date</th>
+                {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>No</th> */}
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Size</th>
-                <th style={{ backgroundColor: '#002244', color: 'white' }}>Od</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Thick</th>
+                <th style={{ backgroundColor: '#002244', color: 'white' }}>Od</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Length</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Gr</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Weigth</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Speed</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>ProdHr</th>
-                <th style={{ backgroundColor: '#002244', color: 'white' }}>TimeAvailable</th>
-                <th style={{ backgroundColor: '#002244', color: 'white' }}>TimeRequired</th>
-                {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>SlitNos</th> */}
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>PlanMt</th>
+                <th style={{ backgroundColor: '#002244', color: 'white' }}>TimeRequired</th>
+                <th style={{ backgroundColor: '#002244', color: 'white' }}>TimeAvailable</th>
+                {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>TimeRequired</th> */}
+                {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>SlitNos</th> */}
+                {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>PlanMt</th> */}
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Role Change Time</th>
-                {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>PrimeWt</th> */}
+                {/* <th style={{ backgroundColor: '#002244', color: 'white' }}></th> */}
               </tr>
             </thead>
             <tbody>
               {filteredData.map((item) => (
                 <tr key={item._id.$oid}>
+                  <td>{item.Plant}</td>
+                  <td>{item.productionPlanNo}</td>
                   <td>{new Date(item.Date).toLocaleDateString()}</td>
                   <td>{item.Size}</td>
-                  <td>{item.odSize}</td>
                   <td>{item.Thick}</td>
+                  <td>{item.odSize}</td>
+                  {/* <td>{item.Thick}</td> */}
                   <td>{item.Length}</td>
                   <td>{item.Gr}</td>
                   <td>{item.Weigth}</td>
                   <td>{item.Speed}</td>
                   <td>{item.ProdHr}</td>
-                  <td>{item.TimeAvailable}</td>
-                  <td>{item.TimeRequired}</td>
-                  {/* <td>{item.SlitNos}</td> */}
                   <td>{item.PlanMt}</td>
-                  <td>{item.rolechangetime}</td>
-                  {/* <td>{item.PrimeWt}</td> */}
+                  {/* <td>{item.TimeAvailable}</td> */}
+                  <td>{item.TimeRequired}</td>
+                  <td>{item.TimeAvailable}</td>
+                  {/* <td>{item.SlitNos}</td> */}
+                  {/* <td>{item.PlanMt}</td> */}
+                  <td>
+                    {item.roleChange === '1.5' ? 'Part Role' : ''}
+                    {item.roleChange === '3' ? 'Full Role' : ''}{' '}
+                  </td>
+                  {/* <td>
+                    <NavLink
+                      to={`/dailyprodreport/${filteredData._id}`}
+                      style={{ color: '#000080' }}
+                    >
+                      <button>Edit</button>
+                    </NavLink>
+                  </td> */}
                 </tr>
               ))}
             </tbody>

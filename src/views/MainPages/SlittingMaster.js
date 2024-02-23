@@ -1,63 +1,27 @@
-import React from 'react'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { NavLink } from 'react-router-dom'
 
 const SlittingMaster = () => {
   const [srNos, setSrNos] = useState([])
   const [selectedSrNo, setSelectedSrNo] = useState('')
-  // const [data, setData] = useState();
-  const [totalWeightSum, setTotalWeightSum] = useState('')
-  const [totalWidhtSum, setTotalWidhtSum] = useState('')
-
-  const [MotherCoilId, setMotherCoilId] = useState(null)
-  const [Width, setWidth] = useState(null)
-  const [Thickness, setThickness] = useState()
-  const [Weigth, setWeigth] = useState(null)
-  const [SlittingSrNo, setSlittingSrNo] = useState(null)
-  const [submittedFormData, setSubmittedFormData] = useState([])
-  const [ActualWeigth, setActualWeight] = useState(null)
-  const [ActualWidth, setActualWidth] = useState(null)
-
-  const [od, setod] = useState([
-    { SlitWidth: 41.3, Thickness: 1.2, OdSize: 41.3 },
-    { SlitWidth: 41.3, Thickness: 1.63, OdSize: 43.3 },
-    { SlitWidth: 41.3, Thickness: 2, OdSize: 42.3 },
-    { SlitWidth: 41.3, Thickness: 2.5, OdSize: 41.3 },
-    { SlitWidth: 41.3, Thickness: 3, OdSize: 41.3 },
-  ])
-
-  const [selectedSlitWidth, setSelectedSlitWidth] = useState('')
-  const [selectedThickness, setSelectedThickness] = useState('')
-
-  const handleSlitWidthChange = (value) => {
-    setSelectedSlitWidth(value)
-    updateOdSize(value, Thickness)
-  }
-
-  useEffect(() => {
-    if (selectedSrNo && selectedSlitWidth && Thickness) {
-      updateOdSize(selectedSlitWidth, Thickness)
-    }
-  }, [selectedSrNo, selectedSlitWidth, Thickness])
-
-  const updateOdSize = (slitWidth, thickness) => {
-    const matchedUser = od.find(
-      (user) =>
-        user.SlitWidth === parseFloat(slitWidth) && user.Thickness === parseFloat(thickness),
-    )
-    if (matchedUser) {
-      setOdSize(matchedUser.OdSize.toString())
-    } else {
-      setOdSize('') // Reset OdSize if no match is found
-    }
-  }
-
-  useEffect(() => {
-    if (selectedSrNo && selectedSlitWidth && Thickness) {
-      updateOdSize(selectedSlitWidth, Thickness)
-    }
-  }, [selectedSrNo, selectedSlitWidth, Thickness])
+  const [MotherCoilId, setMotherCoilId] = useState('')
+  const [thickness, setThickness] = useState('')
+  const [actualCoilWidth, setActualCoilWidth] = useState('')
+  const [actualCoilWeigth, setActualCoilWeigth] = useState('')
+  const [SlitWidth, setSlitWidth] = useState('')
+  const [NoOfSlit, setNoOfSlit] = useState('')
+  const [OdSize, setOdSize] = useState('')
+  const [WTMM, setWTMM] = useState('')
+  const [SlitWeigth, setSlitWeigth] = useState('')
+  const [TotalWeigth, setTotalWeigth] = useState('')
+  const [Trimm, setTrimm] = useState(0)
+  const [Scrap, setScrap] = useState(0)
+  const [entriesArray, setEntriesArray] = useState([])
+  const [saveSuccessMessage, setSaveSuccessMessage] = useState('')
+  const [SlitSrNo, setSlitSrNo] = useState(1)
+  const [combinedId, setcombinedId] = useState()
+  const [Slitcut, setSlitcut] = useState('')
 
   useEffect(() => {
     const fetchData1 = async () => {
@@ -81,14 +45,11 @@ const SlittingMaster = () => {
     try {
       const response = await fetch(`http://localhost:5001/api/data/srno/${selected}`)
       const result = await response.json()
-      setMotherCoilId(result.MotherCoilId || null)
-      setWidth(result.Width || null)
-      setThickness(result.Thickness || null)
-      setWeigth(result.Weigth || null)
-      setActualWeight(result.ActualCoilWeigth || null)
-      setActualWidth(result.ActualCoilWidth || null)
-
-      // setData(result);
+      setMotherCoilId(result.MotherCoilId || '')
+      setThickness(result.Thickness || '')
+      setActualCoilWeigth(result.ActualCoilWeigth)
+      setActualCoilWidth(result.ActualCoilWidth)
+      // Set other state variables as needed
     } catch (error) {
       console.error('Error fetching data:', error)
     }
@@ -96,47 +57,63 @@ const SlittingMaster = () => {
 
   useEffect(() => {
     if (selectedSrNo) {
-      setTotalWeightSum('')
-      setTotalWidhtSum('')
-      setWeigth('')
-      setWidth('')
       fetchData(selectedSrNo)
     }
   }, [selectedSrNo])
 
-  useEffect(() => {
-    const fetchTotalWeightSum = async () => {
-      try {
-        console.log('API Request Start')
-        const response = await axios.get(`http://localhost:5001/api/getTotalWeight/${MotherCoilId}`)
-        console.log('API Request Success', response.data)
-        setTotalWeightSum(response.data.totalWeightSum)
-        setTotalWidhtSum(response.data.slitWeightSum)
-      } catch (error) {
-        console.log('API Request Error', error)
-      }
+  const handleSaveEntries = async () => {
+    if (remainingWeight < 0) {
+      // Display a message and return from the function
+      setSaveSuccessMessage('You have no RemainingWeight.')
+      setTimeout(() => {
+        setSaveSuccessMessage('')
+      }, 1000)
+      return
     }
 
-    console.log('useEffect Triggered')
-    fetchTotalWeightSum()
-  }, [MotherCoilId])
+    try {
+      // Add Slitting Sr No to each entry before saving
+      const entriesWithSrNo = entriesArray.map((entry) => ({
+        ...entry,
+        Slitcut: Slitcut,
+        SlitSrNo: entry.SlitSrNo || 0, // Use 0 if Slitting Sr No is not set
+      }))
 
-  console.log(totalWeightSum)
+      const response = await axios.post('http://localhost:5001/api/saveEntries', entriesWithSrNo)
+      console.log('Saved entries:', response.data)
+      // Handle the response as needed (e.g., display a success message)
+      setEntriesArray([])
+      setSaveSuccessMessage('Entries saved successfully')
 
-  // const [MotherCoilId, setMotherCoilId] = useState('');
-  const [SlitWidth, setSlitWidth] = useState('')
-  const [GR, setGR] = useState('')
-  const [GRNO, setGRNO] = useState('')
-  const [NoOfSlit, setNoOfSlit] = useState('')
-  const [OdSize, setOdSize] = useState('')
-  const [WTMM, setWTMM] = useState('')
-  const [SlitWeigth, setSlitWeigth] = useState('')
-  const [TotalWeigth, setTotalWeigth] = useState('')
-  const [Trimm, setTrimm] = useState('')
-  const [Scrap, setScrap] = useState('')
-  const [Yeilds, setYeilds] = useState('')
-  const [successMessage, setSuccessMessage] = useState('')
-  const [submittedData, setSubmittedData] = useState([])
+      // Reset Slitting Sr No for the next entry
+      setSlitSrNo(0)
+
+      // Clear other form fields and state variables
+      setSelectedSrNo('')
+      setSlitcut(Slitcut)
+      setMotherCoilId('')
+      setThickness('')
+      setActualCoilWeigth('')
+      setActualCoilWidth('')
+      setSlitWidth('')
+      setNoOfSlit('')
+      setOdSize('')
+      setWTMM('')
+      setSlitWeigth('')
+      setTotalWeigth('')
+      setTrimm('')
+      setScrap('')
+
+      setTimeout(() => {
+        setSaveSuccessMessage('')
+      }, 2000)
+    } catch (error) {
+      console.error('Error saving entries:', error)
+      // Handle the error (e.g., display an error message)
+    }
+  }
+
+  console.log(entriesArray)
 
   useEffect(() => {
     const coilWeigth = parseFloat(NoOfSlit) || 0
@@ -145,85 +122,162 @@ const SlittingMaster = () => {
     setTotalWeigth(totalWeigth)
   }, [NoOfSlit, SlitWeigth])
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  // useEffect(() => {
+  //   calculateTotalWeight()
+  // }, [entriesArray])
 
-    try {
-      // Handle logic for both forms
-      const response = await axios.post(
-        'http://localhost:5001/api/slittingmaster',
-        // setSubmittedFormData((prevData) => [
-        // ...prevData,
-        {
-          MotherCoilId,
-          SlittingSrNo,
-          // ... other properties for Slitting Master
-          SlitWidth: selectedSlitWidth,
-          NoOfSlit,
-          OdSize,
-          WTMM,
-          SlitWeigth,
-          TotalWeigth,
-        },
-        // ]),
-      )
+  // const calculateTotalWeight = () => {
+  //   const sum = entriesArray.reduce((accumulator, entry) => {
+  //     return accumulator + parseFloat(entry.TotalWeigth) || 0
+  //   }, 0)
 
-      // Handle success, show success message, etc.
-      console.log(response.data)
+  //   setTotalWeightSum(sum)
+  // }
 
-      // Clear form fields
-      setMotherCoilId(null)
-      setWidth(null)
-      setThickness(null)
-      setWeigth(null)
-      setSelectedSlitWidth('')
-      setNoOfSlit('')
-      setOdSize('')
-      setWTMM('')
-      setSlitWeigth('')
-    } catch (error) {
-      console.error('Error saving data:', error)
-      // Handle error, show error message, etc.
+  // const [totalSlitWidth, setTotalSlitWidth] = useState(0)
+
+  // const calculateTotalSlitWidth = () => {
+  //   const sum = entriesArray.reduce((accumulator, entry) => {
+  //     return accumulator + (parseFloat(entry.NoOfSlit) || 0) * (parseFloat(entry.SlitWidth) || 0)
+  //   }, 0)
+
+  //   setTotalSlitWidth(sum)
+  // }
+
+  // useEffect(() => {
+  //   calculateTotalSlitWidth()
+  // }, [entriesArray])
+
+  // console.log(totalWeightSum, totalSlitWidth)
+
+  // const [remainingCoilWidth, setRemainingCoilWidth] = useState(0)
+  // const [remainingCoilWeight, setRemainingCoilWeight] = useState(0)
+
+  // const calculateRemainingValues = () => {
+  //   const updatedRemainingCoilWidth = parseFloat(actualCoilWidth) - totalSlitWidth
+  //   const updatedRemainingCoilWeight = parseFloat(actualCoilWeigth) - totalWeightSum
+
+  //   setRemainingCoilWidth(updatedRemainingCoilWidth)
+  //   setRemainingCoilWeight(updatedRemainingCoilWeight)
+  // }}
+
+  const [totalWeight, setTotalWeight] = useState('')
+  const [totalWidth, setTotalWidth] = useState('')
+  const [remainingWeight, setRemainingWeight] = useState('')
+  const [remainingWidth, setRemainingWidth] = useState('')
+  const [totalTrimm, setTotalTrimm] = useState('')
+  const [totalScrap, setTotalScrap] = useState('')
+
+  useEffect(() => {
+    const fetchTotalData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5001/calculateTotal/${MotherCoilId}`)
+        const data = response.data
+
+        // Update state with fetched data
+        setTotalWeight(data.totalWeight)
+        setTotalWidth(data.totalWidth)
+        setTotalTrimm(data.totalTrimm)
+        setTotalScrap(data.totalScrap)
+      } catch (error) {
+        console.error('Error fetching total data:', error)
+      }
     }
-  }
 
-  const handleReset = () => {
-    // Reset the state for the second form
+    // Fetch data when the component mounts
+    fetchTotalData()
+  }, [MotherCoilId]) // Add MotherCoilId to dependency array
+
+  const handleAddEntry = () => {
+    if (!SlitWidth || !NoOfSlit) {
+      // Display a message if any required field is missing
+      setSaveSuccessMessage('Please Enter all Fields')
+      setTimeout(() => {
+        setSaveSuccessMessage('')
+      }, 2000)
+      return
+    }
+
+    // If the cut is "Full Cut", set remaining value to 0 and add the remaining coil weight to the scrap
+    if (Slitcut === 'full-cut') {
+      setRemainingWeight(0)
+
+      // Calculate the remaining coil weight
+      const remainingCoilWeight =
+        parseFloat(actualCoilWeigth) - totalWeight - totalTrimm - totalScrap
+
+      // Add the remaining coil weight to the scrap using the updated Scrap value
+      setScrap((prevScrap) => parseFloat(prevScrap) + remainingCoilWeight)
+    } else {
+      // If the cut is not "Full Cut," calculate the remaining values
+      const remainingWidthValue = actualCoilWidth - totalWidth
+      const remainingWeightValue = actualCoilWeigth - totalWeight - totalTrimm - totalScrap
+
+      setRemainingWidth(remainingWidthValue)
+      setRemainingWeight(remainingWeightValue)
+    }
+
+    // Find the maximum SlitSrNo for the current MotherCoilId
+    const maxSlitSrNo = entriesArray.reduce((max, entry) => {
+      if (entry.MotherCoilId === MotherCoilId && entry.SlitSrNo > max) {
+        return entry.SlitSrNo
+      }
+      return max
+    }, 0)
+
+    // If there are no previous entries for the same MotherCoilId, set newSlitSrNo to 1, otherwise increment the maxSlitSrNo
+    const newSlitSrNo = maxSlitSrNo > 0 ? maxSlitSrNo + 1 : 1
+
+    console.log('Slitting Sr No:', newSlitSrNo) // Log the Slitting Sr No to the console
+    // Combine MotherCoilId and SlitSrNo
+    const combinedId = `${MotherCoilId}/${newSlitSrNo}`
+
+    const newEntry = {
+      SlitSrNo: newSlitSrNo,
+      CombinedId: combinedId, // Combined MotherCoilId and SlitSrNo
+      Slitcut: Slitcut,
+      MotherCoilId,
+      SlitWidth,
+      NoOfSlit,
+      OdSize,
+      WTMM,
+      SlitWeigth,
+      TotalWeigth,
+      Trimm,
+      Scrap,
+    }
+
+    setEntriesArray((prevEntries) => [...prevEntries, newEntry])
+
+    // Clear the form fields
     setSlitWidth('')
+    setSlitcut(Slitcut)
+    setcombinedId('')
     setNoOfSlit('')
     setOdSize('')
     setWTMM('')
     setSlitWeigth('')
     setTotalWeigth('')
-    setSelectedSlitWidth('')
+    setScrap('')
+    setTrimm('')
   }
 
-  // const remainWeigth = (Weigth !== null && totalWeightSum !== null ) ? (Weigth - totalWeightSum).toFixed(2) : ''
-  // const remainWidth = (Width !== null && totalWidhtSum!== null) ? (Width - totalWidhtSum).toFixed(2) : ''
-
-  const [remainWeigth, setRemainWeight] = useState(
-    ActualWeigth !== null && totalWeightSum !== null
-      ? (ActualWeigth - totalWeightSum).toFixed(2)
-      : '',
-  )
-  const [remainWidth, setRemainWidth] = useState(
-    Width !== null && totalWidhtSum !== null ? (Width - totalWidhtSum).toFixed(2) : '',
-  )
+  const calculateTotalWeight = (currentIndex) => {
+    return entriesArray
+      .filter((entry, index) => index < currentIndex)
+      .reduce((accumulator, entry) => accumulator + parseFloat(entry.TotalWeigth) || 0, 0)
+  }
 
   useEffect(() => {
-    setRemainWeight(
-      ActualWeigth !== null && totalWeightSum !== null
-        ? (ActualWeigth - totalWeightSum).toFixed(2)
-        : '',
-    )
-    setRemainWidth(
-      ActualWidth !== null && totalWidhtSum !== null
-        ? (ActualWidth - totalWidhtSum).toFixed(2)
-        : '',
-    )
-  }, [ActualWeigth, totalWeightSum, ActualWidth, totalWidhtSum])
+    // Calculate remainingwidth and remainingweight when totalWidth or totalWeight changes
+    const remainingWidthValue = actualCoilWidth - totalWidth
+    const remainingWeightValue = actualCoilWeigth - totalWeight - totalTrimm - totalScrap
+    // calculateRemainingValues()
+    setRemainingWidth(remainingWidthValue)
+    setRemainingWeight(remainingWeightValue)
+  }, [totalWidth, totalWeight, actualCoilWidth, actualCoilWeigth, totalTrimm, totalScrap])
 
-  const [selectedValue, setSelectedValue] = useState('')
+  console.log(remainingWeight, remainingWidth)
 
   return (
     <div>
@@ -250,354 +304,315 @@ const SlittingMaster = () => {
           </NavLink>
         </div>
       </div>
-      {/* {successMessage && <div className="alert alert-success">{successMessage}</div>} */}
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          marginBottom: '2rem',
-          border: '1px solid #ccc',
-          padding: '20px',
-          borderRadius: '10px',
-          margin: '20px',
-        }}
-      >
-        <div className="row">
-          <div className="col-md-4 mb-3">
-            <label className="form-label">Sr No</label>
-            <select
-              id="srNoSelect"
-              className="form-control"
-              value={selectedSrNo}
-              onChange={handleSelectChange}
-              style={{ fontWeight: 'bold' }}
-            >
-              <option value="">Select SrNo</option>
-              {srNos.map((srNo) => (
-                <option key={srNo} value={srNo}>
-                  {srNo}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="col-md-4 mb-3">
-            <label className="form-label">Mother Coil No</label>
-            <input
-              type="number"
-              step="any"
-              className="form-control"
-              name="MotherCoilId"
-              id="MotherCoilId"
-              placeholder="Mother Coil No"
-              value={MotherCoilId}
-              required
-            />
-          </div>
-          <div className="col-md-4 mb-3">
-            <label className="form-label">Cuts</label>
-            <select
-              className="form-control"
-              // onChange={handleDropdownChange}
-              value={selectedValue}
-              style={{ backgroundColor: '#002244', color: 'white' }}
-            >
-              <option>Select SrNo</option>
-              <option value="half-cut">Half Cut</option>
-              <option value="full-cut">Full Cut</option>
-            </select>
-          </div>
+      <div className="row">
+        <div className="col-md-4 mb-3">
+          <label className="form-label">Sr No</label>
+          <select
+            id="srNoSelect"
+            className="form-control"
+            value={selectedSrNo}
+            onChange={handleSelectChange}
+            style={{ fontWeight: 'bold' }}
+          >
+            <option value="">Select SrNo</option>
+            {srNos.map((srNo) => (
+              <option key={srNo} value={srNo}>
+                {srNo}
+              </option>
+            ))}
+          </select>
         </div>
-        <div className="row">
-          <div className="col-md-4 mb-3">
-            <label className="form-label">Thickness</label>
-            <input
-              type="text"
-              step="any"
-              className="form-control"
-              name="Thickness"
-              id="Thickness"
-              placeholder="Thickness"
-              value={Thickness}
-              // onChange={(e) => setThickness(e.target.value)}
-              required
-            />
-          </div>
-          <div className="col-md-4 mb-3">
-            <label className="form-label">Actual CoilWidth</label>
-            <input
-              type="text"
-              step="any"
-              className="form-control"
-              name="ActualCoilWidth"
-              id="ActualCoilWidth"
-              placeholder="Actual CoilWidth"
-              value={ActualWidth}
-              // value={Thickness}
-            />
-          </div>
-          <div className="col-md-4 mb-3">
-            <label className="form-label">Actual CoilWeigth</label>
-            <input
-              type="text"
-              step="any"
-              className="form-control"
-              name="ActualCoilWeigth"
-              id="ActualCoilWeigth"
-              placeholder="Actual CoilWeigth"
-              value={ActualWeigth}
-              // value={Thickness}
-            />
-          </div>
-          <div className="col-md-4 mb-3">
-            <label className="form-label">Remaining CoilWidth</label>
-            <input
-              type="text"
-              step="any"
-              className="form-control"
-              name="RemainingCoilWidth"
-              id="RemainingCoilWidth"
-              placeholder="Remaining CoilWidth"
-              value={remainWidth}
-              // value={Thickness}
-            />
-          </div>
-          <div className="col-md-4 mb-3">
-            <label className="form-label">Remaining CoilWeigth</label>
-            <input
-              type="text"
-              // step="0.01"
-              className="form-control"
-              name="RemainingCoilWeigth"
-              id="RemainingCoilWeigth"
-              placeholder="Remaining CoilWeigth"
-              value={remainWeigth}
-              //  value={remain}
-            />
-          </div>
+        <div className="col-md-4 mb-3">
+          <label className="form-label">Cuts</label>
+          <select
+            className="form-control"
+            required
+            // onChange={handleDropdownChange}
+            value={Slitcut}
+            onChange={(e) => setSlitcut(e.target.value)}
+            style={{ backgroundColor: '#0022', color: 'black' }}
+          >
+            {/* <option>Select SrNo</option> */}
+            <option value="half-cut">Half Cut</option>
+            <option value="full-cut">Full Cut</option>
+          </select>
         </div>
-        {/* </form> */}
+      </div>
+      <div className="row">
+        <div className="col-md-2">
+          <label>Mother Coil Id</label>
+          <input
+            type="string"
+            className="form-control"
+            value={MotherCoilId}
+            // onChange={(e) => setMotherCoilId(e.target.value)}
+            required
+          />
+        </div>
 
-        {/* <form
-        onSubmit={handleSubmit}
-        style={{
-          marginBottom: '2rem',
-          border: '1px solid #ccc',
-          padding: '20px',
-          borderRadius: '10px',
-          margin: '20px',
-        }}
-      > */}
+        <div className="col-md-2">
+          <label>Thickness</label>
+          <input
+            type="string"
+            className="form-control"
+            value={thickness}
+            // onChange={(e) => setMotherCoilId(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="col-md-2">
+          <label>ActualCoilWidth</label>
+          <input
+            type="string"
+            className="form-control"
+            value={actualCoilWidth}
+            // onChange={(e) => setMotherCoilId(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="col-md-2">
+          <label>ActualCoilWeigth</label>
+          <input
+            type="string"
+            className="form-control"
+            value={actualCoilWeigth}
+            // onChange={(e) => setMotherCoilId(e.target.value)}
+            required
+          />
+        </div>
+
+        {/* <div className="col-md-2">
+          <label>RemainingCoilWidth</label>
+          <input
+            type="string"
+            className="form-control"
+            value={remainingWidth}
+            // onChange={(e) => setMotherCoilId(e.target.value)}
+            // required
+          />
+        </div> */}
+
+        <div className="col-md-2">
+          <label>RemainingCoilWeigth</label>
+          <input
+            type="string"
+            className="form-control"
+            // value={remainingWeight < 0 ? 0 : remainingWeight}
+            value={
+              remainingWeight < 0 || (remainingWeight > 0 && remainingWeight < 10)
+                ? 0
+                : remainingWeight
+            }
+            // value={remainingWeight}
+            // onChange={(e) => setMotherCoilId(e.target.value)}
+            required
+          />
+        </div>
+
         <div className="row mt-5">
-          <div className="row mt-5">
-            <div className="col-md-4 mb-3">
-              <label className="form-label">SlitWidth</label>
-              <input
-                type="text"
-                step="any"
-                className="form-control"
-                name="SlitWidth"
-                id="SlitWidth"
-                placeholder="SlitWidth"
-                value={selectedSlitWidth}
-                onChange={(e) => handleSlitWidthChange(e.target.value)}
-                required
-              />
-            </div>
-            <div className="col-md-4 mb-3">
-              <label className="form-label">NoOfSlit</label>
-              <input
-                type="text"
-                step="any"
-                className="form-control"
-                name="NoOfSlit"
-                id="NoOfSlit"
-                placeholder="NoOfSlit"
-                onChange={(e) => setNoOfSlit(e.target.value)}
-                required
-              />
-            </div>
-            <div className="col-md-4 mb-3">
-              <label className="form-label">OdSize</label>
-              <input
-                type="text"
-                step="any"
-                className="form-control"
-                name="OdSize"
-                id="OdSize"
-                placeholder="OdSize"
-                value={OdSize} // <-- Use OdSize instead of od
-                onChange={(e) => setOdSize(e.target.value)}
-                required
-              />
-            </div>
-            <div className="col-md-4 mb-3">
-              <label className="form-label">WT / MM</label>
-              <input
-                type="text"
-                step="any"
-                className="form-control"
-                name="WTMM"
-                id="WTMM"
-                placeholder="WT MM"
-                value={WTMM}
-                onChange={(e) => setWTMM(e.target.value)}
-                required
-              />
-            </div>
-            <div className="col-md-4 mb-3">
-              <label className="form-label">SlitWeigth</label>
-              <input
-                type="text"
-                step="any"
-                className="form-control"
-                name="SlitWeigth"
-                // /step="any"
-                id="SlitWeigth"
-                placeholder="SlitWeigth"
-                onChange={(e) => setSlitWeigth(e.target.value)}
-                required
-              />
-            </div>
-            <div className="col-md-4 mb-3">
-              <label className="form-label">TotalWeigth</label>
-              <input
-                type="text"
-                step="any"
-                className="form-control"
-                name="TotalWeigth"
-                id="TotalWeigth"
-                placeholder="TotalWeigth"
-                // onChange={(e) => setTotalWeigth(e.target.value)}
-                value={TotalWeigth}
-                required
-              />
-            </div>
-            {/* <div className="col-md-4 mb-3">
-            <label className="form-label">Trimm</label>
+          <h4>Add Slits Data</h4>
+        </div>
+
+        <div className="row">
+          <div className="col-md-2">
+            <label>Mother Coil Id</label>
             <input
-              type="text"
+              type="string"
+              className="form-control"
+              value={MotherCoilId}
+              onChange={(e) => setMotherCoilId(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="col-md-2">
+            <label>Slit Width</label>
+            <input
+              type="string"
+              className="form-control"
+              value={SlitWidth}
+              onChange={(e) => setSlitWidth(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="col-md-2">
+            <label>No of Slit</label>
+            <input
+              type="string"
+              className="form-control"
+              value={NoOfSlit}
+              onChange={(e) => setNoOfSlit(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="col-md-2">
+            <label>OD Size</label>
+            <input
+              type="string"
               step="any"
               className="form-control"
-              name="Trimm"
-              id="Trimm"
-              placeholder="Trimm"
+              value={OdSize}
+              onChange={(e) => setOdSize(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="col-md-2">
+            <label>WT / MM</label>
+            <input
+              type="string"
+              step="any"
+              className="form-control"
+              value={WTMM}
+              onChange={(e) => setWTMM(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="col-md-2">
+            <label>Slit Weight</label>
+            <input
+              type="string"
+              step="any"
+              className="form-control"
+              value={SlitWeigth}
+              onChange={(e) => setSlitWeigth(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="col-md-2">
+            <label>Total Weight</label>
+            <input
+              type="string"
+              step="any"
+              className="form-control"
+              value={TotalWeigth}
+              // onChange={(e) => setTotalWeigth(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="col-md-2">
+            <label>Trimm</label>
+            <input
+              type="string"
+              step="any"
+              className="form-control"
+              value={Trimm}
               onChange={(e) => setTrimm(e.target.value)}
               required
             />
-          </div> */}
-            {/* <div className="col-md-4 mb-3">
-            <label className="form-label">Scrap</label>
+          </div>
+
+          <div className="col-md-2">
+            <label>Scrap</label>
             <input
-              type="text"
+              type="string"
               step="any"
               className="form-control"
-              name="Scrap"
-              id="Scrap"
-              placeholder="Scrap"
+              value={Scrap}
               onChange={(e) => setScrap(e.target.value)}
               required
             />
-          </div> */}
-            {/* <div className="col-md-4 mb-3">
-            <label className="form-label">Yeilds</label>
-            <input
-              type="text"
-              step="any"
-              className="form-control"
-              name="Yeilds"
-              id="Yeilds"
-              placeholder="Yeilds"
-              onChange={(e) => setYeilds(e.target.value)}
-              required
-            />
-          </div> */}
           </div>
-          <div className="row">
-            <div className="col-md-4">
-              <button
-                type="submit"
-                className="btn"
-                style={{
-                  backgroundColor: '#002244',
-                  color: 'white',
-                  paddingLeft: '3rem',
-                  paddingRight: '3rem',
-                  marginRight: '1rem',
-                }}
-                // onClick={handleAddAnother}
-              >
-                Add
-              </button>
-            </div>
-            <div className="col-md-4">
-              <button
-                type="reset"
-                className="btn"
-                style={{
-                  backgroundColor: '#002244',
-                  color: 'white',
-                  paddingLeft: '5rem',
-                  paddingRight: '5rem',
-                  marginRight: '5rem',
-                }}
-                onClick={handleReset}
-              >
-                Reset
-              </button>
-            </div>
-          </div>
-          {/* </form> */}
-        </div>
-      </form>
-      <div style={{ marginLeft: '2rem' }}>
-        <button
-          type="submit"
-          className="btn"
-          style={{
-            backgroundColor: '#002244',
-            color: 'white',
-            paddingLeft: '5rem',
-            paddingRight: '5rem',
-            marginRight: '5rem',
-          }}
-        >
-          Save
-        </button>
-      </div>
 
-      <div>
-        {/* ... (other code) */}
-        {/* Step 4: Render a table to display submitted data */}
-        {submittedData.length > 0 && (
-          <div>
-            <h4 style={{ marginTop: '2rem', color: '#002244' }}>Submitted Data</h4>
+          <div className="col-md-2 mt-4">
+            <button
+              className="btn btn-primary"
+              style={{ paddingLeft: '2rem', paddingRight: '2rem' }}
+              onClick={handleAddEntry}
+            >
+              Add
+            </button>
+          </div>
+        </div>
+
+        {/* <div className="col-md-2 mt-2">
+          <button className="btn btn-primary" onClick={handleAddEntry}>
+            Add
+          </button>
+        </div> */}
+
+        <div className="col-md-4 mt-4 ">
+          <button
+            className="btn btn-success"
+            style={{ paddingLeft: '2rem', paddingRight: '2rem' }}
+            onClick={handleSaveEntries}
+          >
+            Save Slits
+          </button>
+        </div>
+
+        <div className="row mt-3">
+          <div className="col-md-12">
+            <h3>Slittings :</h3>
             <table className="table">
-              <thead>
+              <thead className="table-dark">
                 <tr>
-                  <th style={{ backgroundColor: '#002244', color: 'white' }}>Slit Width</th>
-                  <th style={{ backgroundColor: '#002244', color: 'white' }}>No of Slit</th>
-                  <th style={{ backgroundColor: '#002244', color: 'white' }}>Od Size</th>
-                  <th style={{ backgroundColor: '#002244', color: 'white' }}>WT/MM</th>
-                  <th style={{ backgroundColor: '#002244', color: 'white' }}>Slit Weight</th>
-                  <th style={{ backgroundColor: '#002244', color: 'white' }}>Total Weight</th>
+                  <th>Mother Coil Id</th>
+                  <td>Slit Sr No</td>
+                  <th>Slit Width</th>
+                  <th>No of Slit</th>
+                  <th>OD Size</th>
+                  <th>WT / MM</th>
+                  <th>Slit Weight</th>
+                  <th>Total Weight</th>
+                  <th>Slit cut</th>
+                  <th>Scrap</th>
+                  <th>remaining weight</th>
                 </tr>
               </thead>
               <tbody>
-                {submittedData.map((data, index) => (
+                {entriesArray.map((entry, index) => (
                   <tr key={index}>
-                    <td>{data.SlitWidth}</td>
-                    <td>{data.NoOfSlit}</td>
-                    <td>{data.OdSize}</td>
-                    <td>{data.WTMM}</td>
-                    <td>{data.SlitWeigth}</td>
-                    <td>{data.TotalWeigth.toFixed(2)}</td>
+                    <td>{entry.MotherCoilId}</td>
+                    <td>{entry.CombinedId}</td>
+                    <td>{entry.SlitWidth}</td>
+                    <td>{entry.NoOfSlit}</td>
+                    <td>{entry.OdSize}</td>
+                    <td>{entry.WTMM}</td>
+                    <td>{entry.SlitWeigth}</td>
+                    <td>{entry.TotalWeigth}</td>
+                    <td>{entry.Slitcut}</td>
+                    <td>{entry.Scrap}</td>
+                    {/* <td>
+                      {parseFloat(actualCoilWeigth) - entry.TotalWeigth - totalTrimm - totalScrap}
+                    </td> */}
+                    <td>
+                      {parseFloat(actualCoilWeigth) -
+                        calculateTotalWeight(index + 1) -
+                        totalTrimm -
+                        totalScrap}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        )}
+        </div>
       </div>
-      {successMessage && <div className="alert alert-success">{successMessage}</div>}
+      <div className="row mt-3">
+        <div className="col-md-12">
+          <h3>{saveSuccessMessage}</h3>
+          {/* ... (rest of your component) */}
+        </div>
+      </div>
+      {remainingWeight < 0 && (
+        <div className="alert alert-danger" role="alert">
+          You have no RemainingWeight.
+        </div>
+      )}
+
+      {remainingWeight > 0 && remainingWeight < 10 && (
+        <div className="alert alert-danger" role="alert">
+          You have no RemainingWeight.
+        </div>
+      )}
     </div>
   )
 }

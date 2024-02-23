@@ -14,6 +14,8 @@ const DailyProdPlanData = React.lazy(() => import('./views/MainPages/DailyProdPl
 const DailyProdReport = React.lazy(() => import('./views/MainPages/DailyProdReport'))
 const DailyProdReportData = React.lazy(() => import('./views/MainPages/DailyProdReportData'))
 const WeightMasterImage = React.lazy(() => import('./views/MainPages/WeightMasterImage'))
+const Editdailyplan = React.lazy(() => import('./views/MainPages/Editdailyplan'))
+// const Editdailypaln = React.lazy(() => import('./views/MainPages/editdailypaln'))
 
 // const editasset = React.lazy(() => import('./views/assetTable/EditAsset'))
 
@@ -77,6 +79,7 @@ const routes = [
     element: DailyProdReportData,
   },
   { path: '/WeightMasterImage/:id', name: 'WeightMasterImage', element: WeightMasterImage },
+  { path: '/editdailyplan', name: 'Editdailyplan', element: Editdailyplan },
 ]
 
 export default routes

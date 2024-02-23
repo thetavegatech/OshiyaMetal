@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { NavLink } from 'react-router-dom'
+import * as math from 'mathjs'
+import Select from 'react-select'
+
 // import { CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from '@coreui/react'
 
 const DailyProdPlan = () => {
   const [Date, setDate] = useState('')
+  const [productionPlanNo, setproductionPlanNo] = useState('')
   const [Size, setSize] = useState('')
-  const [odSize, setOdSize] = useState('')
+  const [odSize, setodSize] = useState('')
   const [Thick, setThick] = useState('')
   const [Length, setLength] = useState('')
   const [Gr, setGr] = useState('')
@@ -27,6 +31,8 @@ const DailyProdPlan = () => {
   const [JointWt, setJointWt] = useState('')
   const [roleChange, setRoleChange] = useState('')
   const [rolechangetime, setrolechangetime] = useState('')
+  const [Plant, setPlant] = useState('')
+
   // const [cq, setCQ] = useState('')
   // const [cqWt, setCQWt] = useState('')
   // const [odTrim, setOdTrim] = useState('')
@@ -45,46 +51,373 @@ const DailyProdPlan = () => {
     { Size: 41.3, Thick: 2, odSize: 42.3, Speed: 50 },
     { Size: 41.3, Thick: 2.5, odSize: 41.3, Speed: 40 },
     { Size: 41.3, Thick: 3, odSize: 41.3, Speed: 35 },
+    { Size: 32 * 32, Thick: 1.2, odSize: 41.3, Speed: 50 },
+    { Size: 41.3, Thick: 3.2, odSize: 41.3, Speed: 35 },
+    { Size: 41.3, Thick: 3.5, odSize: 41.3, Speed: 35 },
+    { Size: 41.3, Thick: 4, odSize: 41.3, Speed: 30 },
+    { Size: 48.3, Thick: 1.2, odSize: 48.3, Speed: 60 },
+    { Size: 48.3, Thick: 1.63, odSize: 48.3, Speed: 70 },
+    { Size: 48.3, Thick: 2, odSize: 48.3, Speed: 65 },
+    { Size: 48.3, Thick: 2.5, odSize: 48.3, Speed: 55 },
+    { Size: 48.3, Thick: 3, odSize: 48.3, Speed: 50 },
+    { Size: 48.3, Thick: 3.2, odSize: 48.3, Speed: 45 },
+    { Size: 48.3, Thick: 3.5, odSize: 48.3, Speed: 40 },
+    { Size: 48.3, Thick: 4, odSize: 48.3, Speed: 35 },
+    { Size: 60.3, Thick: 1.2, odSize: 60.3, Speed: 60 },
+    { Size: 60.3, Thick: 1.63, odSize: 60.3, Speed: 70 },
+    { Size: 60.3, Thick: 2, odSize: 60.3, Speed: 65 },
+    { Size: 60.3, Thick: 2.5, odSize: 60.3, Speed: 50 },
+    { Size: 60.3, Thick: 3, odSize: 60.3, Speed: 45 },
+    { Size: 60.3, Thick: 3.2, odSize: 60.3, Speed: 40 },
+    { Size: 60.3, Thick: 3.5, odSize: 60.3, Speed: 35 },
+    { Size: 60.3, Thick: 4, odSize: 60.3, Speed: 30 },
+    { Size: 60.3, Thick: 5, odSize: 60.3, Speed: 25 },
+    { Size: 76.2, Thick: 1.2, odSize: 76.2, Speed: 50 },
+    { Size: 76.2, Thick: 1.63, odSize: 76.2, Speed: 50 },
+    { Size: 76.2, Thick: 2, odSize: 76.2, Speed: 50 },
+    { Size: 76.2, Thick: 2.5, odSize: 76.2, Speed: 45 },
+    { Size: 76.2, Thick: 3, odSize: 76.2, Speed: 40 },
+    { Size: 76.2, Thick: 3.2, odSize: 76.2, Speed: 40 },
+    { Size: 76.2, Thick: 3.5, odSize: 76.2, Speed: 35 },
+    { Size: 76.2, Thick: 4, odSize: 76.2, Speed: 30 },
+    { Size: 76.2, Thick: 5, odSize: 76.2, Speed: 25 },
+    { Size: 88.9, Thick: 1.63, odSize: 88.9, Speed: 50 },
+    { Size: 88.9, Thick: 2, odSize: 88.9, Speed: 45 },
+    { Size: 88.9, Thick: 2.5, odSize: 88.9, Speed: 40 },
+    { Size: 88.9, Thick: 3, odSize: 88.9, Speed: 35 },
+    { Size: 88.9, Thick: 3.2, odSize: 88.9, Speed: 35 },
+    { Size: 88.9, Thick: 3.5, odSize: 88.9, Speed: 30 },
+    { Size: 88.9, Thick: 4, odSize: 88.9, Speed: 25 },
+    { Size: 88.9, Thick: 5, odSize: 88.9, Speed: 20 },
+    { Size: 114.3, Thick: 1.63, odSize: 114.3, Speed: 40 },
+    { Size: 114.3, Thick: 2, odSize: 114.3, Speed: 40 },
+    { Size: 114.3, Thick: 2.5, odSize: 114.3, Speed: 35 },
+    { Size: 114.3, Thick: 3, odSize: 114.3, Speed: 30 },
+    { Size: 114.3, Thick: 3.2, odSize: 114.3, Speed: 30 },
+    { Size: 114.3, Thick: 3.5, odSize: 114.3, Speed: 25 },
+    { Size: 114.3, Thick: 4, odSize: 114.3, Speed: 25 },
+    { Size: 114.3, Thick: 5, odSize: 114.3, Speed: 20 },
+    { Size: 32 * 32, Thick: 1.2, odSize: 41.3, Speed: 50 },
+    { Size: 32 * 32, Thick: 1.63, odSize: 41.3, Speed: 60 },
+    { Size: 32 * 32, Thick: 2, odSize: 41.3, Speed: 50 },
+    { Size: 32 * 32, Thick: 2.5, odSize: 41.3, Speed: 40 },
+    { Size: 32 * 32, Thick: 3, odSize: 41.3, Speed: 35 },
+    { Size: 38 * 38, Thick: 1.2, odSize: 48.3, Speed: 60 },
+    { Size: 38 * 38, Thick: 1.63, odSize: 48.3, Speed: 70 },
+    { Size: 38 * 38, Thick: 2, odSize: 48.3, Speed: 65 },
+    { Size: 38 * 38, Thick: 2.5, odSize: 48.3, Speed: 55 },
+    { Size: 38 * 38, Thick: 3, odSize: 48.3, Speed: 50 },
+    { Size: 38 * 38, Thick: 3.2, odSize: 48.3, Speed: 45 },
+    { Size: 38 * 38, Thick: 3.5, odSize: 48.3, Speed: 40 },
+    { Size: 38 * 38, Thick: 4, odSize: 48.3, Speed: 35 },
+    { Size: 48 * 48, Thick: 1.2, odSize: 60.3, Speed: 60 },
+    { Size: 48 * 48, Thick: 1.4, odSize: 60.3, Speed: 60 },
+    { Size: 48 * 48, Thick: 1.63, odSize: 60.3, Speed: 70 },
+    { Size: 48 * 48, Thick: 2, odSize: 60.3, Speed: 65 },
+    { Size: 48 * 48, Thick: 2.5, odSize: 60.3, Speed: 50 },
+    { Size: 48 * 48, Thick: 3, odSize: 60.3, Speed: 45 },
+    { Size: 48 * 48, Thick: 3.2, odSize: 60.3, Speed: 40 },
+    { Size: 48 * 48, Thick: 3.5, odSize: 60.3, Speed: 35 },
+    { Size: 48 * 48, Thick: 4, odSize: 60.3, Speed: 30 },
+    { Size: 48 * 48, Thick: 5, odSize: 60.3, Speed: 25 },
+    { Size: 50 * 50, Thick: 1.2, odSize: 63.5, Speed: 60 },
+    { Size: 50 * 50, Thick: 1.63, odSize: 63.5, Speed: 70 },
+    { Size: 50 * 50, Thick: 2, odSize: 63.5, Speed: 65 },
+    { Size: 50 * 50, Thick: 2.5, odSize: 63.5, Speed: 50 },
+    { Size: 50 * 50, Thick: 3, odSize: 63.5, Speed: 45 },
+    { Size: 50 * 50, Thick: 3.5, odSize: 63.5, Speed: 35 },
+    { Size: 50 * 50, Thick: 4, odSize: 63.5, Speed: 30 },
+    { Size: 50 * 50, Thick: 5, odSize: 63.5, Speed: 25 },
+    { Size: 60 * 60, Thick: 1.2, odSize: 76.2, Speed: 50 },
+    { Size: 60 * 60, Thick: 1.63, odSize: 76, Speed: 50 },
+    { Size: 60 * 60, Thick: 2, odSize: 76.2, Speed: 50 },
+    { Size: 60 * 60, Thick: 2.5, odSize: 76.2, Speed: 45 },
+    { Size: 60 * 60, Thick: 3, odSize: 76.2, Speed: 40 },
+    { Size: 60 * 60, Thick: 3.2, odSize: 76, Speed: 40 },
+    { Size: 60 * 60, Thick: 3.5, odSize: 76.2, Speed: 35 },
+    { Size: 60 * 60, Thick: 4, odSize: 76.2, Speed: 30 },
+    { Size: 60 * 60, Thick: 5, odSize: 76.2, Speed: 25 },
+    { Size: 72 * 72, Thick: 1.63, odSize: 88.9, Speed: 50 },
+    { Size: 72 * 72, Thick: 2, odSize: 88.9, Speed: 50 },
+    { Size: 72 * 72, Thick: 2.5, odSize: 88.9, Speed: 45 },
+    { Size: 72 * 72, Thick: 3, odSize: 88.9, Speed: 45 },
+    { Size: 72 * 72, Thick: 3.2, odSize: 88.9, Speed: 40 },
+    { Size: 72 * 72, Thick: 3.5, odSize: 88.9, Speed: 40 },
+    { Size: 72 * 72, Thick: 4, odSize: 88.9, Speed: 35 },
+    { Size: 72 * 72, Thick: 5, odSize: 88.9, Speed: 25 },
+    { Size: 75 * 75, Thick: 1.63, odSize: 94, Speed: 50 },
+    { Size: 75 * 75, Thick: 2, odSize: 94, Speed: 50 },
+    { Size: 75 * 75, Thick: 2.5, odSize: 94, Speed: 45 },
+    { Size: 75 * 75, Thick: 3, odSize: 94, Speed: 40 },
+    { Size: 75 * 75, Thick: 3.2, odSize: 94, Speed: 40 },
+    { Size: 75 * 75, Thick: 3.5, odSize: 94, Speed: 35 },
+    { Size: 75 * 75, Thick: 4, odSize: 94, Speed: 30 },
+    { Size: 75 * 75, Thick: 5, odSize: 94, Speed: 20 },
+    { Size: 91 * 91, Thick: 2, odSize: 114.3, Speed: 40 },
+    { Size: 91 * 91, Thick: 2.5, odSize: 114.3, Speed: 35 },
+    { Size: 91 * 91, Thick: 3, odSize: 114.3, Speed: 30 },
+    { Size: 91 * 91, Thick: 3.5, odSize: 114.3, Speed: 25 },
+    { Size: 91 * 91, Thick: 4, odSize: 114.3, Speed: 20 },
+    { Size: 91 * 91, Thick: 5, odSize: 114.3, Speed: 15 },
+    { Size: 50 * 25, Thick: 1.2, odSize: 48.3, Speed: 50 },
+    { Size: 50 * 25, Thick: 1.63, odSize: 48.3, Speed: 70 },
+    { Size: 50 * 25, Thick: 2, odSize: 48.3, Speed: 65 },
+    { Size: 50 * 25, Thick: 2.5, odSize: 48.3, Speed: 55 },
+    { Size: 50 * 25, Thick: 3, odSize: 48.3, Speed: 45 },
+    { Size: 58 * 38, Thick: 1.2, odSize: 60.3, Speed: 50 },
+    { Size: 58 * 38, Thick: 1.63, odSize: 60.3, Speed: 70 },
+    { Size: 58 * 38, Thick: 2, odSize: 60.3, Speed: 65 },
+    { Size: 58 * 38, Thick: 2.5, odSize: 60.3, Speed: 55 },
+    { Size: 58 * 38, Thick: 3, odSize: 60.3, Speed: 50 },
+    { Size: 60 * 40, Thick: 1.6, odSize: 63.5, Speed: 70 },
+    { Size: 60 * 40, Thick: 2, odSize: 63.5, Speed: 65 },
+    { Size: 60 * 40, Thick: 2.5, odSize: 63.5, Speed: 50 },
+    { Size: 60 * 40, Thick: 3, odSize: 63.5, Speed: 45 },
+    { Size: 60 * 40, Thick: 3.2, odSize: 63.5, Speed: 45 },
+    { Size: 60 * 40, Thick: 3.5, odSize: 63.5, Speed: 40 },
+    { Size: 60 * 40, Thick: 4, odSize: 63.5, Speed: 35 },
+    { Size: 72 * 24, Thick: 1.2, odSize: 60.3, Speed: 50 },
+    { Size: 72 * 24, Thick: 1.63, odSize: 60.3, Speed: 50 },
+    { Size: 72 * 24, Thick: 2, odSize: 60.3, Speed: 50 },
+    { Size: 72 * 24, Thick: 2.5, odSize: 60.3, Speed: 40 },
+    { Size: 75 * 25, Thick: 1.2, odSize: 63.5, Speed: 50 },
+    { Size: 75 * 25, Thick: 1.6, odSize: 63.5, Speed: 50 },
+    { Size: 75 * 25, Thick: 2, odSize: 63.5, Speed: 50 },
+    { Size: 75 * 25, Thick: 2.5, odSize: 63.5, Speed: 40 },
+    { Size: 75 * 25, Thick: 3, odSize: 63.5, Speed: 35 },
+    { Size: 80 * 40, Thick: 1.63, odSize: 76.2, Speed: 50 },
+    { Size: 80 * 40, Thick: 2, odSize: 76.2, Speed: 50 },
+    { Size: 80 * 40, Thick: 2.5, odSize: 76.2, Speed: 45 },
+    { Size: 80 * 40, Thick: 3, odSize: 76.2, Speed: 40 },
+    { Size: 80 * 40, Thick: 3.2, odSize: 76.2, Speed: 40 },
+    { Size: 80 * 40, Thick: 3.5, odSize: 76.2, Speed: 35 },
+    { Size: 80 * 40, Thick: 4, odSize: 76.2, Speed: 30 },
+    { Size: 80 * 40, Thick: 5, odSize: 76.2, Speed: 25 },
+    { Size: 95 * 25, Thick: 1.63, odSize: 76.2, Speed: 50 },
+    { Size: 95 * 25, Thick: 2, odSize: 76.2, Speed: 50 },
+    { Size: 95 * 25, Thick: 2.5, odSize: 76.2, Speed: 45 },
+    { Size: 96 * 48, Thick: 1.63, odSize: 88.9, Speed: 50 },
+    { Size: 96 * 48, Thick: 2, odSize: 88.9, Speed: 50 },
+    { Size: 96 * 48, Thick: 2.5, odSize: 88.9, Speed: 45 },
+    { Size: 96 * 48, Thick: 3, odSize: 88.9, Speed: 40 },
+    { Size: 96 * 48, Thick: 3.2, odSize: 88.9, Speed: 40 },
+    { Size: 96 * 48, Thick: 3.5, odSize: 88.9, Speed: 35 },
+    { Size: 96 * 48, Thick: 4, odSize: 88.9, Speed: 30 },
+    { Size: 96 * 48, Thick: 5, odSize: 88.9, Speed: 25 },
+    { Size: 100 * 50, Thick: 1.63, odSize: 94, Speed: 50 },
+    { Size: 100 * 50, Thick: 2, odSize: 94, Speed: 50 },
+    { Size: 100 * 50, Thick: 2.5, odSize: 94, Speed: 45 },
+    { Size: 100 * 50, Thick: 3, odSize: 94, Speed: 40 },
+    { Size: 100 * 50, Thick: 3.2, odSize: 94, Speed: 40 },
+    { Size: 100 * 50, Thick: 3.5, odSize: 94, Speed: 35 },
+    { Size: 100 * 50, Thick: 4, odSize: 94, Speed: 30 },
+    { Size: 100 * 50, Thick: 5, odSize: 94, Speed: 20 },
+    { Size: 122 * 60, Thick: 2, odSize: 114.3, Speed: 35 },
+    { Size: 122 * 60, Thick: 2.5, odSize: 114.3, Speed: 30 },
+    { Size: 122 * 60, Thick: 3, odSize: 114.3, Speed: 30 },
+    { Size: 122 * 60, Thick: 3.2, odSize: 114.3, Speed: 30 },
+    { Size: 122 * 60, Thick: 3.5, odSize: 114.3, Speed: 25 },
+    { Size: 122 * 60, Thick: 4, odSize: 114.3, Speed: 20 },
+    { Size: 'Relling', Thick: 1.63, odSize: 60.3, Speed: 50 },
+    { Size: 19.05, Thick: 0.8, odSize: 19.05, Speed: 50 },
+    { Size: 19.05, Thick: 1, odSize: 19.05, Speed: 50 },
+    { Size: 19.05, Thick: 1.2, odSize: 19.05, Speed: 60 },
+    { Size: 19.05, Thick: 1.63, odSize: 19.05, Speed: 60 },
+    { Size: 19.05, Thick: 2, odSize: 19.05, Speed: 50 },
+    { Size: 19.05, Thick: 2.5, odSize: 19.05, Speed: 40 },
+    { Size: 25.4, Thick: 0.8, odSize: 25.4, Speed: 50 },
+    { Size: 25.4, Thick: 1, odSize: 25.4, Speed: 50 },
+    { Size: 25.4, Thick: 1.2, odSize: 25.4, Speed: 50 },
+    { Size: 25.4, Thick: 1.63, odSize: 25.4, Speed: 60 },
+    { Size: 25.4, Thick: 2, odSize: 25.4, Speed: 50 },
+    { Size: 25.4, Thick: 2.5, odSize: 25.4, Speed: 40 },
+    { Size: 25.4, Thick: 3, odSize: 25.4, Speed: 35 },
+    { Size: 31.75, Thick: 0.8, odSize: 31.75, Speed: 50 },
+    { Size: 31.75, Thick: 1, odSize: 31.75, Speed: 50 },
+    { Size: 31.75, Thick: 1.2, odSize: 31.75, Speed: 50 },
+    { Size: 31.75, Thick: 1.63, odSize: 31.75, Speed: 60 },
+    { Size: 31.75, Thick: 2, odSize: 31.75, Speed: 50 },
+    { Size: 31.75, Thick: 2.5, odSize: 31.75, Speed: 40 },
+    { Size: 31.75, Thick: 3, odSize: 31.75, Speed: 35 },
+    { Size: 38.1, Thick: 1.6, odSize: 38.1, Speed: 60 },
+    { Size: 38.1, Thick: 2, odSize: 38.1, Speed: 50 },
+    { Size: 38.1, Thick: 2.5, odSize: 38.1, Speed: 40 },
+    { Size: 38.1, Thick: 3, odSize: 38.1, Speed: 35 },
+    { Size: 38.1, Thick: 3.2, odSize: 38.1, Speed: 30 },
+    { Size: 38.1, Thick: 3.5, odSize: 38.1, Speed: 30 },
+    { Size: 41.3, Thick: 1.2, odSize: 41.3, Speed: 50 },
+    { Size: 41.3, Thick: 1.63, odSize: 41.3, Speed: 60 },
+    { Size: 41.3, Thick: 2, odSize: 41.3, Speed: 50 },
+    { Size: 41.3, Thick: 2.5, odSize: 41.3, Speed: 40 },
+    { Size: 41.3, Thick: 3, odSize: 41.3, Speed: 35 },
+    { Size: 41.3, Thick: 3.2, odSize: 41.3, Speed: 35 },
+    { Size: 41.3, Thick: 3.5, odSize: 41.3, Speed: 35 },
+    { Size: 41.3, Thick: 4, odSize: 41.3, Speed: 30 },
+    { Size: 15 * 15, Thick: 0.8, odSize: 19.05, Speed: 50 },
+    { Size: 15 * 15, Thick: 1, odSize: 19.0, Speed: 50 },
+    { Size: 15 * 15, Thick: 1.2, odSize: 19.05, Speed: 60 },
+    { Size: 15 * 15, Thick: 1.63, odSize: 19.05, Speed: 60 },
+    { Size: 15 * 15, Thick: 2, odSize: 19.05, Speed: 50 },
+    { Size: 20 * 20, Thick: 0.8, odSize: 25.4, Speed: 50 },
+    { Size: 20 * 20, Thick: 1, odSize: 25.4, Speed: 50 },
+    { Size: 20 * 20, Thick: 1.2, odSize: 25.4, Speed: 50 },
+    { Size: 20 * 20, Thick: 1.63, odSize: 25.4, Speed: 60 },
+    { Size: 20 * 20, Thick: 2, odSize: 25.4, Speed: 50 },
+    { Size: 20 * 20, Thick: 2.5, odSize: 25.4, Speed: 40 },
+    { Size: 25 * 25, Thick: 0.8, odSize: 31.75, Speed: 50 },
+    { Size: 25 * 25, Thick: 1, odSize: 31.75, Speed: 50 },
+    { Size: 25 * 25, Thick: 1.2, odSize: 31.75, Speed: 50 },
+    { Size: 25 * 25, Thick: 1.63, odSize: 31.75, Speed: 60 },
+    { Size: 25 * 25, Thick: 2, odSize: 31.75, Speed: 50 },
+    { Size: 25 * 25, Thick: 2.5, odSize: 31.75, Speed: 40 },
+    { Size: 25 * 25, Thick: 3, odSize: 31.75, Speed: 35 },
+    { Size: 32 * 32, Thick: 1.2, odSize: 41.3, Speed: 50 },
+    { Size: 32 * 32, Thick: 1.63, odSize: 41.3, Speed: 60 },
+    { Size: 32 * 32, Thick: 2, odSize: 41.3, Speed: 50 },
+    { Size: 32 * 32, Thick: 2.5, odSize: 41.3 },
+    { Size: 32 * 32, Thick: 3, odSize: 41.3 },
+    { Size: 20 * 15, Thick: 0.8, odSize: 22.23 },
+    { Size: 26 * 13, Thick: 0.8, odSize: 25.4 },
+    { Size: 30 * 20, Thick: 1.63, odSize: 31.75 },
+    { Size: 40 * 20, Thick: 1.2, odSize: 38.1 },
+    { Size: 40 * 20, Thick: 1.4, odSize: 38.1 },
+    { Size: 40 * 20, Thick: 1.63, odSize: 38.1 },
+    { Size: 40 * 20, Thick: 2, odSize: 38.1 },
+    { Size: 40 * 20, Thick: 2.5, odSize: 38.1 },
+    { Size: 80 * 80, Thick: 2, odSize: 101.6 },
+    { Size: 80 * 80, Thick: 2.5, odSize: 101.6 },
+    { Size: 80 * 80, Thick: 3, odSize: 101.6 },
+    { Size: 80 * 80, Thick: 3.5, odSize: 101.6 },
+    { Size: 80 * 80, Thick: 4, odSize: 101.6 },
+    { Size: 80 * 80, Thick: 5, odSize: 101.6 },
+    { Size: 80 * 80, Thick: 6, odSize: 101.6 },
+    { Size: 100 * 100, Thick: 2, odSize: 127 },
+    { Size: 100 * 100, Thick: 2.5, odSize: 127 },
+    { Size: 100 * 100, Thick: 3, odSize: 127 },
+    { Size: 100 * 100, Thick: 3.5, odSize: 127 },
+    { Size: 100 * 100, Thick: 4, odSize: 127 },
+    { Size: 100 * 100, Thick: 5, odSize: 127 },
+    { Size: 100 * 100, Thick: 6, odSize: 127 },
+    { Size: 132 * 132, Thick: 2, odSize: 165 },
+    { Size: 132 * 132, Thick: 2.5, odSize: 165 },
+    { Size: 132 * 132, Thick: 3, odSize: 165 },
+    { Size: 132 * 132, Thick: 3.5, odSize: 165 },
+    { Size: 132 * 132, Thick: 4, odSize: 165 },
+    { Size: 132 * 132, Thick: 4.5, odSize: 165 },
+    { Size: 132 * 132, Thick: 5, odSize: 165 },
+    { Size: 132 * 132, Thick: 6, odSize: 165 },
+    { Size: 150 * 150, Thick: 2, odSize: 192 },
+    { Size: 150 * 150, Thick: 2.5, odSize: 192 },
+    { Size: 150 * 150, Thick: 3, odSize: 192 },
+    { Size: 150 * 150, Thick: 3.5, odSize: 192 },
+    { Size: 150 * 150, Thick: 4, odSize: 192 },
+    { Size: 150 * 150, Thick: 4.5, odSize: 192 },
+    { Size: 150 * 150, Thick: 5, odSize: 192 },
+    { Size: 150 * 150, Thick: 6, odSize: 192 },
+    { Size: 145 * 82, Thick: 2, odSize: 144 },
+    { Size: 145 * 82, Thick: 2.5, odSize: 144 },
+    { Size: 145 * 82, Thick: 3, odSize: 144 },
+    { Size: 145 * 82, Thick: 3.5, odSize: 144 },
+    { Size: 145 * 82, Thick: 4, odSize: 144 },
+    { Size: 145 * 82, Thick: 4.5, odSize: 144 },
+    { Size: 145 * 82, Thick: 5, odSize: 144 },
+    { Size: 145 * 82, Thick: 6, odSize: 144 },
+    { Size: 200 * 100, Thick: 2, odSize: 192 },
+    { Size: 200 * 100, Thick: 2.5, odSize: 192 },
+    { Size: 200 * 100, Thick: 3, odSize: 192 },
+    { Size: 200 * 100, Thick: 3.5, odSize: 192 },
+    { Size: 200 * 100, Thick: 4, odSize: 192 },
+    { Size: 200 * 100, Thick: 4.5, odSize: 192 },
+    { Size: 200 * 100, Thick: 5, odSize: 192 },
+    { Size: 200 * 100, Thick: 6, odSize: 192 },
+    { Size: 140, Thick: 2, odSize: 140 },
+    { Size: 140, Thick: 2.5, odSize: 140 },
+    { Size: 140, Thick: 3, odSize: 140 },
+    { Size: 140, Thick: 3.5, odSize: 140 },
+    { Size: 140, Thick: 4, odSize: 140 },
+    { Size: 140, Thick: 4.5, odSize: 140 },
+    { Size: 140, Thick: 5, odSize: 140 },
+    { Size: 140, Thick: 6, odSize: 140 },
+    { Size: 165, Thick: 1.6, odSize: 165 },
+    { Size: 165, Thick: 2, odSize: 165 },
+    { Size: 165, Thick: 2.5, odSize: 165 },
+    { Size: 165, Thick: 3, odSize: 165 },
+    { Size: 165, Thick: 3.5, odSize: 165 },
+    { Size: 165, Thick: 4, odSize: 165 },
+    { Size: 165, Thick: 4.5, odSize: 165 },
+    { Size: 165, Thick: 5, odSize: 165 },
+    { Size: 165, Thick: 6, odSize: 165 },
+    { Size: 194, Thick: 2, odSize: 194 },
+    { Size: 194, Thick: 2.5, odSize: 194 },
+    { Size: 194, Thick: 3, odSize: 194 },
+    { Size: 194, Thick: 3.5, odSize: 194 },
+    { Size: 194, Thick: 4, odSize: 194 },
+    { Size: 194, Thick: 4.5, odSize: 194 },
+    { Size: 194, Thick: 5, odSize: 194 },
+    { Size: 194, Thick: 6, odSize: 194 },
+    { Size: 219, Thick: 3, odSize: 219 },
+    { Size: 219, Thick: 3.5, odSize: 219 },
+    { Size: 219, Thick: 4, odSize: 219 },
+    { Size: 219, Thick: 4.5, odSize: 219 },
+    { Size: 219, Thick: 5, odSize: 219 },
+    { Size: 219, Thick: 6, odSize: 219 },
   ])
-  const [selectedSlitWidth, setSelectedSlitWidth] = useState('')
 
-  const handleSlitWidthChange = (value) => {
-    const { odSize, Speed } = updateOdSize(value, Thick)
-    setSelectedSlitWidth(value)
-    setOdSize(odSize)
+  const [selectedSize, setSelectedSize] = useState('')
+
+  const handleSizeChange = (value) => {
+    const { odSize, Speed } = updateodSize(value, Thick)
+    console.log('Input Value:', value)
+    setSelectedSize(value)
+    setodSize(odSize)
     setSpeed(Speed)
   }
 
   useEffect(() => {
-    if (selectedSlitWidth && Thick) {
-      const { odSize, Speed } = updateOdSize(selectedSlitWidth, Thick)
-      setOdSize(odSize)
+    if (selectedSize && Thick) {
+      const { odSize, Speed } = updateodSize(selectedSize, Thick)
+      setodSize(odSize)
       setSpeed(Speed)
     }
-  }, [selectedSlitWidth, Thick])
+  }, [selectedSize, Thick])
 
-  const updateOdSize = (size, thick) => {
-    const matchedUser = odData.find(
-      (user) => user.Size === parseFloat(size) && user.Thick === parseFloat(thick),
-    )
+  const updateodSize = (size, thick) => {
+    try {
+      // const parsedSize = math.evaluate(size) // Evaluate the mathematical e*pression
+      const parsedExpression = math.parse(size)
+      // Evaluate the parsed expression
+      const parsedSize = parsedExpression.evaluate()
 
-    if (matchedUser) {
-      const odSize = matchedUser.odSize ? matchedUser.odSize.toString() : ''
-      const Speed = matchedUser.Speed ? matchedUser.Speed.toString() : '' // Use 'Speed' instead of 'speed'
-      return { odSize, Speed }
-    } else {
-      return { odSize: '', Speed: '' } // Reset OdSize and speed if no match is found
+      if (!isNaN(parsedSize)) {
+        const matchedUser = odData.find(
+          (user) => user.Size === parsedSize && user.Thick === parseFloat(thick),
+        )
+
+        if (matchedUser) {
+          const odSize = matchedUser.odSize ? matchedUser.odSize.toString() : ''
+          const Speed = matchedUser.Speed ? matchedUser.Speed.toString() : ''
+          return { odSize, Speed }
+        }
+      }
+    } catch (error) {
+      // Handle the case where the e*pression is not a valid mathematical e*pression
+      console.error('Invalid mathematical e*pression:', error)
     }
+
+    // Reset odSize and speed if no valid match is found
+    return { odSize: '', Speed: '' }
   }
 
   console.log(odSize)
   console.log(Speed)
+  // productionPlanNo
+  console.log(productionPlanNo)
 
   useEffect(() => {
-    if (selectedSlitWidth && Thick && Speed) {
-      updateOdSize(selectedSlitWidth, Thick)
+    if (selectedSize && Thick && Speed) {
+      updateodSize(selectedSize, Thick)
     }
-  }, [selectedSlitWidth, Thick])
+  }, [selectedSize, Thick])
 
   const handleSelectChange = (event) => {
     const selectedValue = event.target.value
@@ -109,24 +442,43 @@ const DailyProdPlan = () => {
     const REQUIRED_TIME = PLANMT / PROHR
     setTimeRequired(REQUIRED_TIME.toFixed(2))
 
-    // Calculate timeAvailable
-    // const TIME_AVAILABLE = Math.max(8 - REQUIRED_TIME)
-    // setTimeAvailable(TIME_AVAILABLE.toFixed(2))
-
     // Calculate initial timeAvailable
     const INITIAL_TIME_AVAILABLE = Math.max(8 - REQUIRED_TIME, 0)
     setTimeAvailable(INITIAL_TIME_AVAILABLE.toFixed(2))
 
-    // Calculate timeAvailable considering role change
-    // const ROLE_CHANGE_TIME = parseFloat(roleChange) || 0
-    // const UPDATED_TIME_AVAILABLE = Math.max(INITIAL_TIME_AVAILABLE - ROLE_CHANGE_TIME, 0)
-    // setTimeAvailable(UPDATED_TIME_AVAILABLE.toFixed(2))
+    // Calculate updated timeAvailable based on roleChange
+    let UPDATED_TIME_AVAILABLE
+    if (roleChange) {
+      // If roleChange is selected, subtract required time and role change time
+      UPDATED_TIME_AVAILABLE = INITIAL_TIME_AVAILABLE - REQUIRED_TIME - parseFloat(roleChange)
+    } else {
+      // Otherwise, consider initial time available minus required time
+      UPDATED_TIME_AVAILABLE = INITIAL_TIME_AVAILABLE
+    }
+
+    setTimeAvailable(UPDATED_TIME_AVAILABLE.toFixed(2))
 
     // Calculate timeAvailable
     // const TIME_AVAILABLE = parseFloat(timeAvailable) || 0
-    const ROLE_CHANGE_TIME = parseFloat(roleChange) || 0
-    const UPDATED_TIME_AVAILABLE = INITIAL_TIME_AVAILABLE - REQUIRED_TIME - ROLE_CHANGE_TIME
-    setrolechangetime(UPDATED_TIME_AVAILABLE.toFixed(2))
+    // const ROLE_CHANGE_TIME = parseFloat(TimeAvailable) || 0
+    // const UPDATED_TIME_AVAILABLE = INITIAL_TIME_AVAILABLE - REQUIRED_TIME - ROLE_CHANGE_TIME
+    // setrolechangetime(UPDATED_TIME_AVAILABLE.toFixed(2))
+
+    // if (PlanMt) {
+    //   const REQUIRED_TIME = PlanMt / PROHR
+    //   setTimeRequired(REQUIRED_TIME.toFixed(2))
+
+    //   let UPDATED_TIME_AVAILABLE
+    //   if (roleChange) {
+    //     // If roleChange is selected, only consider role change time
+    //     UPDATED_TIME_AVAILABLE = INITIAL_TIME_AVAILABLE - REQUIRED_TIME - ROLE_CHANGE_TIME
+    //   } else {
+    //     // Otherwise, consider initial time available minus required time and role change time
+    //     UPDATED_TIME_AVAILABLE = 0
+    //   }
+
+    //   setrolechangetime(UPDATED_TIME_AVAILABLE.toFixed(2))
+    // }
 
     // const PQ2 = parseFloat(pq2)
     // const PQ2WT = WEIGTH * PQ2
@@ -149,7 +501,7 @@ const DailyProdPlan = () => {
 
     // const PROFTD = PRIMEWT + OPENWT + JOINTWT + CQWT + ODTRIM + TESTEND + COILTRIM
 
-    // setProdFTD(PROFTD.toFixed(2))
+    // setProdFTD(PROFTD.toFi*ed(2))
   }, [
     odSize,
     Thick,
@@ -178,7 +530,9 @@ const DailyProdPlan = () => {
     try {
       // Create an object with the data to be sent to the server
       const formData = {
-        Size: selectedSlitWidth,
+        productionPlanNo: productionPlanNo,
+        Plant: Plant,
+        Size: selectedSize,
         odSize: odSize,
         Thick: Thick,
         Length: Length,
@@ -212,14 +566,16 @@ const DailyProdPlan = () => {
         // Sracp: Scrap,
       }
 
-      // Make API call to save data using Axios
+      // Make API call to save data using A*ios
       const response = await axios.post('http://localhost:5001/api/saveproplan', formData)
 
       if (response.status === 200) {
         console.log('Data saved successfully:', response.data)
         // Clear all fields
-        setSize(selectedSlitWidth)
-        setOdSize('')
+        setSize(selectedSize)
+        setproductionPlanNo('')
+        setPlant('')
+        setodSize('')
         setThick('')
         setLength('')
         setGr('')
@@ -263,6 +619,12 @@ const DailyProdPlan = () => {
     }
   }
 
+  // const handleRoleChange = (e) => {
+  //   const selectedValue = e.target.value
+  //   const label = selectedValue ? `${selectedValue} [${selectedValue}]` : ''
+  //   setRoleChange(label)
+  // }
+
   const vars = {
     '--cui-dropdown-bg': 'blue',
   }
@@ -277,41 +639,37 @@ const DailyProdPlan = () => {
   return (
     <div>
       <div className="row">
-        <div className="col-3">
+        <div className="col-md-3">
           <h4 style={{ marginBottom: '1rem', color: '#002244' }}>Daily Production Plan</h4>
         </div>
-        <div className="col-3">
+        {/* <div className="col-md-3">
           <select
             className="form-control"
             style={{
               backgroundColor: '#002244',
               color: 'white',
-              marginLeft: '0%',
-              marginLeft: '16rem',
             }}
-            // value={selectedPlant}
-            // onChange={handlePlantChange}
+            // onChange={(e) => setproductionPlanNo(e.target.value)}
+            value={Plant}
+            onChange={handleSubmit}
           >
             <option value="">Select Plant</option>
             <option value="TM-01">TM-01</option>
             <option value="TM-02">TM-02</option>
             <option value="TM-03">TM-03</option>
           </select>
-        </div>
+        </div> */}
         {/* <div className="row">
           <div className="col-md-4"> */}
         <div className="col-3">
           <NavLink to="/dailyprodplandata">
             <button
-              type="submit"
+              type="button"
               className="form-control"
-              // className="btn"
               style={{
                 backgroundColor: '#002244',
                 color: 'white',
-                marginLeft: '16rem',
-                // paddingLeft: '3rem',
-                // paddingRight: '3rem',
+                marginLeft: '35rem',
               }}
             >
               Plan Data
@@ -324,12 +682,50 @@ const DailyProdPlan = () => {
         onSubmit={handleSubmit}
         style={{
           marginBottom: '2rem',
-          border: '1px solid #ccc',
-          padding: '20px',
-          borderRadius: '10px',
-          margin: '20px',
+          border: '1p* solid #ccc',
+          padding: '20p*',
+          borderRadius: '10p*',
+          margin: '20p*',
         }}
       >
+        <div className="row">
+          <div className="col-md-4">
+            <div className="mb-3">
+              <label className="form-label">Production Plan No</label>
+              <input
+                type="number"
+                className="form-control"
+                name="productionPlanNo"
+                id="productionPlanNo"
+                value={productionPlanNo}
+                onChange={(e) => setproductionPlanNo(e.target.value)}
+                // required
+              />
+            </div>
+          </div>
+          <div className="col-md-4">
+            <div className="md-3">
+              <select
+                className="form-control"
+                style={{
+                  backgroundColor: '#0022',
+                  // color: 'white',
+                  marginTop: '1.5rem',
+                }}
+                name="Plant"
+                id="Plant"
+                value={Plant}
+                onChange={(e) => setPlant(e.target.value)}
+                // onChange={handleSubmit}
+              >
+                <option value="">Select Plant</option>
+                <option value="TM-01">TM-01</option>
+                <option value="TM-02">TM-02</option>
+                <option value="TM-03">TM-03</option>
+              </select>
+            </div>
+          </div>
+        </div>
         <div className="row">
           <div className="col-md-4">
             <div className="mb-3">
@@ -345,35 +741,127 @@ const DailyProdPlan = () => {
               />
             </div>
           </div>
+          <div className="col-md-4">
+            <div className="mb-3">
+              <label className="form-label">Size</label>
+              {/* <input
+                type="te*t"
+                className="form-control"
+                name="Size"
+                id="Size"
+                required
+                // placeholder="Size"
+                value={selectedSize}
+                onChange={(e) => handleSizeChange(e.target.value)}
+              /> */}
+              <select
+                className="form-select"
+                name="Size"
+                id="Size"
+                required
+                value={selectedSize}
+                onChange={(e) => handleSizeChange(e.target.value)}
+              >
+                <option value="" disabled>
+                  Select Od Size
+                </option>
+                <option value="41.3">41.3</option>
+                <option value="32 * 32">32 * 32</option>
+                <option value="48.3">48.3</option>
+                <option value="60.3">60.3</option>
+                <option value="76.2">76.2</option>
+                <option value="88.9">88.9</option>
+                <option value="114.3">114.3</option>
+                <option value="38 * 38">38 * 38</option>
+                <option value="48 * 48">48 * 48</option>
+                <option value="50 * 50">50 * 50</option>
+                <option value="60 * 60">60 * 60</option>
+                <option value="72 * 72">72 * 72</option>
+                <option value="75 * 75">75 * 75</option>
+                <option value="91 * 91">91 * 91</option>
+                <option value="50 * 25">50 * 25</option>
+                <option value="58 * 38">58 * 38</option>
+                <option value="60 * 40">60 * 40</option>
+                <option value="72 * 24">72 * 24</option>
+                <option value="75 * 25">75 * 25</option>
+                <option value="80 * 40">80 * 40</option>
+                <option value="95 * 25">95 * 25</option>
+                <option value="96 * 48">96 * 48</option>
+                <option value="100 * 50">100 * 50</option>
+                <option value="122 * 60">122 * 60</option>
+                <option value="19.05">19.05</option>
+                <option value="25.4">25.4</option>
+                <option value="31.75">31.75</option>
+                <option value="38.1">38.1</option>
+                <option value="15 * 15">15 * 15</option>
+                <option value="20 * 20">20 * 20</option>
+                <option value="25 * 25">25 * 25</option>
+                <option value="20 * 15">20 * 15</option>
+                <option value="26 * 13">26 * 13</option>
+                <option value="30 * 20">30 * 20</option>
+                <option value="40 * 20">40 * 20</option>
+                <option value="80 * 80">80 * 80</option>
+                <option value="100 * 100">100 * 100</option>
+                <option value="132 * 132">132 * 132</option>
+                <option value="150 * 150">150 * 150</option>
+                <option value="145 * 82">145 * 82</option>
+                <option value="200 * 100">200 * 100</option>
+                <option value="140">140</option>
+                <option value="165">165</option>
+                <option value="194">194</option>
+                <option value="219">219</option>
+                <option value="Relling">Relling</option>
+              </select>
+            </div>
+          </div>
 
           <div className="col-md-4">
             <div className="mb-3">
               <label className="form-label">Thickness</label>
-              <input
-                type="number"
+              <select
                 className="form-control"
                 name="Thick"
                 id="Thick"
                 required
                 value={Thick}
                 onChange={(e) => setThick(e.target.value)}
-              />
+              >
+                <option value="" disabled>
+                  Select Od Size
+                </option>
+                <option value="0.8">0.8</option>
+                <option value="1">1</option>
+                <option value="1.2">1.2</option>
+                <option value="1.4">1.4</option>
+                <option value="1.6">1.6</option>
+                <option value="1.63">1.63</option>
+                <option value="2">2</option>
+                <option value="2.5">2.5</option>
+                <option value="3">3</option>
+                <option value="3.2">3.2</option>
+                <option value="3.5">3.5</option>
+                <option value="4">4</option>
+                <option value="4.5">4.5</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                {/* Add other options as needed */}
+              </select>
             </div>
           </div>
-          <div className="col-md-4">
+          {/* <div className="col-md-4">
             <div className="mb-3">
               <label className="form-label">Size</label>
               <input
-                type="text"
+                type="te*t"
                 className="form-control"
                 name="Size"
                 id="Size"
                 // placeholder="Size"
-                value={selectedSlitWidth}
-                onChange={(e) => handleSlitWidthChange(e.target.value)}
+                value={selectedSize}
+                onChange={(e) => handleSizeChange(e.target.value)}
               />
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="row">
           <div className="col-md-4">
@@ -386,7 +874,7 @@ const DailyProdPlan = () => {
                 id="Od"
                 // placeholder="Od"
                 value={odSize}
-                onChange={(e) => setOdSize(e.target.value)}
+                onChange={(e) => setodSize(e.target.value)}
               />
             </div>
           </div>
@@ -415,6 +903,7 @@ const DailyProdPlan = () => {
                 id="CoilType"
                 // placeholder="Coil type"
                 value={Gr}
+                required
                 onChange={(e) => setGr(e.target.value)}
               >
                 <option value="" disabled selected>
@@ -438,6 +927,7 @@ const DailyProdPlan = () => {
                 className="form-control"
                 name="Length"
                 id="Length"
+                required
                 // placeholder="Length"
                 value={Length}
                 onChange={(e) => setLength(e.target.value)}
@@ -467,6 +957,7 @@ const DailyProdPlan = () => {
                 className="form-control"
                 name="ProdHr"
                 id="ProdHr"
+                required
                 // placeholder="ProdHr"
                 value={ProdHr}
                 onChange={(e) => setProdHr(e.target.value)}
@@ -525,10 +1016,10 @@ const DailyProdPlan = () => {
             style={{
               // width: '70%',
               marginBottom: '2rem',
-              // border: '1px solid #ccc',
-              // padding: '20px',/
-              // borderRadius: '10px',
-              // margin: '20px',
+              // border: '1p* solid #ccc',
+              // padding: '20p*',/
+              // borderRadius: '10p*',
+              // margin: '20p*',
             }}
           >
             <div className="col-md-4">
@@ -539,13 +1030,14 @@ const DailyProdPlan = () => {
                   name="roleChange"
                   id="roleChange"
                   value={roleChange}
+                  // onChange={handleRoleChange}
                   onChange={(e) => setRoleChange(e.target.value)}
                 >
-                  <option value="" disabled selected>
+                  <option value="" selected>
                     Select Role Change
                   </option>
-                  <option value="1.5">Part Role</option>
-                  <option value="3">Full Role</option>
+                  <option value="1.5">Part Role </option>
+                  <option value="3">Full Role </option>
                 </select>
               </div>
             </div>
@@ -557,8 +1049,8 @@ const DailyProdPlan = () => {
                   className="form-control"
                   name="rolechangetime"
                   id="rolechangetime"
-                  required
-                  value={rolechangetime}
+                  // required
+                  value={roleChange}
                   onChange={(e) => setrolechangetime(e.target.value)}
                 />
               </div>

@@ -11,9 +11,7 @@ const DailyProdReportData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          'https://oshiyameatlbackend.onrender.com/api/getdailyproreportdata',
-        ) // Replace with your actual API endpoint
+        const response = await fetch('http://localhost:5001/api/getdailyproreportdata') // Replace with your actual API endpoint
         const result = await response.json()
         setData(result)
         setLoading(false)
@@ -118,14 +116,14 @@ const DailyProdReportData = () => {
           {/* <label>Filter Data</label> */}
           {data.length > 0 && (
             <div>
-              <input
+              {/* <input
                 type="text"
                 placeholder="Search by Date"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{ marginLeft: '5rem' }}
-              />
-              <button
+              /> */}
+              {/* <button
                 className="btn"
                 style={{
                   backgroundColor: '#002244',
@@ -136,7 +134,7 @@ const DailyProdReportData = () => {
                 onClick={handleSearch}
               >
                 Search
-              </button>
+              </button> */}
               <button
                 className="btn"
                 style={{
@@ -161,7 +159,8 @@ const DailyProdReportData = () => {
           <table className="table table-bordered table-hover">
             <thead className="table-dark">
               <tr>
-                <th style={{ backgroundColor: '#002244', color: 'white' }}>Date</th>
+                <th style={{ backgroundColor: '#002244', color: 'white' }}>plan no</th>
+                <th style={{ backgroundColor: '#002244', color: 'white' }}>MotherCoil no</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Size</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Od</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Thick</th>
@@ -170,14 +169,15 @@ const DailyProdReportData = () => {
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Weigth</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Speed</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>ProdHr</th>
-                <th style={{ backgroundColor: '#002244', color: 'white' }}>TimeAvailable</th>
-                <th style={{ backgroundColor: '#002244', color: 'white' }}>TimeRequired</th>
-                <th style={{ backgroundColor: '#002244', color: 'white' }}>SlitNos</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>PlanMt</th>
+                {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>TimeAvailable</th>
+                <th style={{ backgroundColor: '#002244', color: 'white' }}>TimeRequired</th> */}
+                <th style={{ backgroundColor: '#002244', color: 'white' }}>SlitNos</th>
+                {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>PlanMt</th> */}
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>PrimeNos</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>PrimeWt</th>
-                <th style={{ backgroundColor: '#002244', color: 'white' }}>PQ2</th>
-                <th style={{ backgroundColor: '#002244', color: 'white' }}>PQ2Wt</th>
+                {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>PQ2</th>
+                <th style={{ backgroundColor: '#002244', color: 'white' }}>PQ2Wt</th> */}
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Open</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>OpenWt</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Joint</th>
@@ -187,8 +187,9 @@ const DailyProdReportData = () => {
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>OdTrim</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>TestEnd</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>CoilTrim</th>
-                <th style={{ backgroundColor: '#002244', color: 'white' }}>ProdFTD</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Yeilds%</th>
+                <th style={{ backgroundColor: '#002244', color: 'white' }}>ProdFTD</th>
+                {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>Yeilds%</th> */}
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Target</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Scrap</th>
               </tr>
@@ -196,23 +197,26 @@ const DailyProdReportData = () => {
             <tbody>
               {filteredData.map((item) => (
                 <tr key={item._id.$oid}>
-                  <td>{new Date(item.Date).toLocaleDateString()}</td>
+                  <td>{item.selectedProductionPlanNo}</td>
+                  <td>{item.selectedCombinedId}</td>
+                  {/* <td>{new Date(item.Date).toLocaleDateString()}</td> */}
                   <td>{item.Size}</td>
-                  <td>{item.Od}</td>
+                  <td>{item.odSize}</td>
                   <td>{item.Thick}</td>
                   <td>{item.Length}</td>
                   <td>{item.Gr}</td>
                   <td>{item.Weigth}</td>
                   <td>{item.Speed}</td>
                   <td>{item.ProdHr}</td>
-                  <td>{item.TimeAvailable}</td>
-                  <td>{item.TimeRequired}</td>
-                  <td>{item.SlitNos}</td>
                   <td>{item.PlanMt}</td>
+                  {/* <td>{item.TimeAvailable}</td>
+                  <td>{item.TimeRequired}</td> */}
+                  <td>{item.SlitNos}</td>
+                  {/* <td>{item.PlanMt}</td> */}
                   <td>{item.PrimeNos}</td>
                   <td>{item.PrimeWt}</td>
-                  <td>{item.PQ2}</td>
-                  <td>{item.PQ2Wt}</td>
+                  {/* <td>{item.PQ2}</td>
+                  <td>{item.PQ2Wt}</td> */}
                   <td>{item.Open}</td>
                   <td>{item.OpenWt}</td>
                   <td>{item.Joint}</td>
@@ -223,8 +227,9 @@ const DailyProdReportData = () => {
                   <td>{item.OdTrim}</td>
                   <td>{item.TestEnd}</td>
                   <td>{item.CoilTrim}</td>
-                  <td>{item.ProdFTD}</td>
                   <td>{item.Yeilds}%</td>
+                  <td>{item.ProdFTD}</td>
+                  {/* <td>{item.Yeilds}%</td> */}
                   <td>{item.Target}</td>
                   <td>{item.Scrap}</td>
                 </tr>
