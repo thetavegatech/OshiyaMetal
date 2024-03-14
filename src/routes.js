@@ -1,4 +1,5 @@
 import React from 'react'
+import BreakDown from './views/MainPages/Breakdown'
 
 const Login = React.lazy(() => import('./views/pages/login/Login'))
 const Logout = React.lazy(() => import('./views/pages/Logout'))
@@ -15,6 +16,10 @@ const DailyProdReport = React.lazy(() => import('./views/MainPages/DailyProdRepo
 const DailyProdReportData = React.lazy(() => import('./views/MainPages/DailyProdReportData'))
 const WeightMasterImage = React.lazy(() => import('./views/MainPages/WeightMasterImage'))
 const Editdailyplan = React.lazy(() => import('./views/MainPages/Editdailyplan'))
+const VehicleTracking = React.lazy(() => import('./views/MainPages/VehicleTracking'))
+const Breakdown = React.lazy(() => import('./views/MainPages/Breakdown'))
+const BreakdownTable = React.lazy(() => import('./views/MainPages/BreakdownTable'))
+
 // const Editdailypaln = React.lazy(() => import('./views/MainPages/editdailypaln'))
 
 // const editasset = React.lazy(() => import('./views/assetTable/EditAsset'))
@@ -80,6 +85,21 @@ const routes = [
   },
   { path: '/WeightMasterImage/:id', name: 'WeightMasterImage', element: WeightMasterImage },
   { path: '/editdailyplan', name: 'Editdailyplan', element: Editdailyplan },
+  {
+    path: '/vehicle',
+    name: 'VehicleTracking',
+    element: VehicleTracking,
+  },
+  {
+    path: '/breakdown',
+    name: 'Breakdown',
+    element: Breakdown,
+  },
+  {
+    path: '/breakdowntable',
+    name: 'BreakdownTable',
+    element: BreakdownTable,
+  },
 ]
 
 export default routes

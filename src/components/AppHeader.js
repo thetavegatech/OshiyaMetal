@@ -112,6 +112,7 @@ const AppHeader = () => {
   const sidebarShow = useSelector((state) => state.custom.sidebarShow) // Assuming 'custom' is the key for your reducer
   const userrole = useSelector((state) => state.auth.userInfo?.role) || ''
   const username = useSelector((state) => state.auth.userInfo?.name)
+  const AllotedMachine = useSelector((state) => state.auth.userInfo?.AllotedMachine)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [logoutApiCall] = useLogoutMutation()
@@ -154,8 +155,9 @@ const AppHeader = () => {
         </CHeaderNav>
         <CHeaderNav>
           <CNavItem>
-            {/* <h6>Welcome, {username}</h6> */}
+            <h6>Welcome, {username}</h6>
             <h6>Role : {userrole}</h6>
+            <h6>Alloted machine : {AllotedMachine}</h6>
             {/* <CIcon icon={cilUser} /> */}
           </CNavItem>
           {/* <CNavItem>

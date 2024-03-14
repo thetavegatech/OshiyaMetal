@@ -32,18 +32,180 @@ const DailyProdPlan = () => {
   const [roleChange, setRoleChange] = useState('')
   const [rolechangetime, setrolechangetime] = useState('')
   const [Plant, setPlant] = useState('')
+  const [WorkHours, setWorkHours] = useState('')
+  const [productionPlanData, setProductionPlanData] = useState([])
+  const [entries, setEntries] = useState([])
+  const [status, setStatus] = useState('Pending')
 
-  // const [cq, setCQ] = useState('')
-  // const [cqWt, setCQWt] = useState('')
-  // const [odTrim, setOdTrim] = useState('')
-  // const [testEnd, setTestEnd] = useState('')
-  // const [coilTrim, setCoilTrim] = useState('')
-  // const [prodFTD, setProdFTD] = useState('')
-  // const [yeilds, setYeilds] = useState('')
-  // const [target, setTarget] = useState('')
-  // const [Scrap, setScrap] = useState('')
-  // const [srNos, setSrNos] = useState([])
-  // const [selectedSrNo, setSelectedSrNo] = useState('')
+  // Fetch production plan data from the API on component mount
+  useEffect(() => {
+    const fetchProductionPlanData = async () => {
+      try {
+        const response = await axios.get('http://localhost:5001/api/getdailyproplandata')
+        if (response.status === 200) {
+          setProductionPlanData(response.data)
+        } else {
+          console.error('Failed to fetch production plan data')
+        }
+      } catch (error) {
+        console.error('Error fetching production plan data:', error)
+      }
+    }
+
+    fetchProductionPlanData()
+  }, [])
+
+  // Function to add a new entry to the state
+  const addEntry = () => {
+    // Validate required fields before adding the entry
+    if (productionPlanNo && Plant && selectedSize && Thick && Length && Gr) {
+      let lastCalculatedTimeAvailable = parseFloat(TimeAvailable)
+
+      if (entries.length > 0) {
+        const lastEntryTimeAvailable = parseFloat(entries[entries.length - 1].TimeAvailable)
+        lastCalculatedTimeAvailable = lastEntryTimeAvailable - parseFloat(TimeRequired)
+
+        // Subtract roleChange time if roleChange is selected
+        if (roleChange) {
+          lastCalculatedTimeAvailable -= parseFloat(roleChange)
+        }
+      }
+      setEntries((prevEntries) => [
+        ...prevEntries,
+        {
+          productionPlanNo,
+          Plant,
+          Size: selectedSize,
+          odSize,
+          Thick,
+          Length,
+          Gr,
+          Weigth,
+          Speed,
+          ProdHr,
+          TimeAvailable: lastCalculatedTimeAvailable.toFixed(2),
+          TimeRequired,
+          WorkHours,
+          // SlitNos: SlitNos,
+          PlanMt,
+          Date,
+          roleChange,
+          rolechangetime,
+          status: 'Pending',
+          // Add other fields as needed
+        },
+      ])
+
+      // Clear the form fields after adding the entry
+      setSize(selectedSize)
+      setproductionPlanNo('')
+      setPlant('')
+      setodSize('')
+      setThick('')
+      setLength('')
+      setGr('')
+      setWeigth('')
+      setSpeed('')
+      setProdHr('')
+      setWorkHours('')
+      setTimeAvailable(lastCalculatedTimeAvailable.toFixed(2))
+      setTimeRequired('')
+      setrolechangetime('')
+      setRoleChange('')
+      // setSlitNos('')
+      setPlanMt('')
+      setDate('')
+      setStatus('Pending')
+      // Clear other fields as needed
+    } else {
+      // Display an error message or handle validation
+      alert('Please fill in all required fields.')
+    }
+  }
+
+  // Function to save all entries
+  const saveAllEntries = async () => {
+    try {
+      // Make API call to save all entries using axios
+      const response = await axios.post('http://localhost:5001/api/saveproplan', entries)
+
+      if (response.status === 200) {
+        console.log('All entries saved successfully:', response.data)
+        // Clear the entries state after saving
+        setEntries([])
+        setStatus('Pending')
+        // Display success message
+        alert('All entries saved successfully')
+      } else {
+        console.error('Failed to save entries')
+        // Handle error or show a user-friendly message
+      }
+    } catch (error) {
+      console.error('Internal Server Error:', error)
+      // Handle error or show a user-friendly message
+    }
+  }
+
+  // JSX for the production plan table
+  const productionPlanTable = (
+    <div>
+      <h2>Production Plan Table</h2>
+      <table className="table">
+        <thead>
+          <tr>
+            {/* Add table header columns based on your production plan data structure */}
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>Plant</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>Plan No</th>
+            {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>Date</th> */}
+            {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>No</th> */}
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>Size</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>Thick</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>Od</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>Length</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>Gr</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>Weigth</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>Speed</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>ProdHr</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>PlanMt</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>WorkHours</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>TimeRequired</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>TimeAvailable</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>Status</th>
+            {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>SlitNos</th> */}
+            {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>PlanMt</th> */}
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>Role Change Time</th>
+            {/* Add more columns as needed */}
+          </tr>
+        </thead>
+        <tbody>
+          {/* {productionPlanData.map((plan) => ( */}
+          {entries.map((entry, index) => (
+            // <tr key={plan.id}>
+            <tr key={index}>
+              <td>{entry.Plant}</td>
+              <td>{entry.productionPlanNo}</td>
+              {/* <td>{new Date(plan.Date).toLocaleDateString()}</td> */}
+              <td>{entry.Size}</td>
+              <td>{entry.Thick}</td>
+              <td>{entry.odSize}</td>
+              {/* <td>{item.Thick}</td> */}
+              <td>{entry.Length}</td>
+              <td>{entry.Gr}</td>
+              <td>{entry.Weigth}</td>
+              <td>{entry.Speed}</td>
+              <td>{entry.ProdHr}</td>
+              <td>{entry.PlanMt}</td>
+              <td>{entry.WorkHours}</td>
+              <td>{entry.TimeRequired}</td>
+              <td>{entry.TimeAvailable}</td>
+              <td>{entry.status}</td>
+              {/* Display other plan details in respective columns */}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
 
   const [odData, setod] = useState([
     { Size: 41.3, Thick: 1.2, odSize: 41.3, Speed: 50 },
@@ -443,7 +605,7 @@ const DailyProdPlan = () => {
     setTimeRequired(REQUIRED_TIME.toFixed(2))
 
     // Calculate initial timeAvailable
-    const INITIAL_TIME_AVAILABLE = Math.max(8 - REQUIRED_TIME, 0)
+    const INITIAL_TIME_AVAILABLE = Math.max(WorkHours - REQUIRED_TIME, 0)
     setTimeAvailable(INITIAL_TIME_AVAILABLE.toFixed(2))
 
     // Calculate updated timeAvailable based on roleChange
@@ -458,67 +620,18 @@ const DailyProdPlan = () => {
 
     setTimeAvailable(UPDATED_TIME_AVAILABLE.toFixed(2))
 
-    // Calculate timeAvailable
-    // const TIME_AVAILABLE = parseFloat(timeAvailable) || 0
-    // const ROLE_CHANGE_TIME = parseFloat(TimeAvailable) || 0
-    // const UPDATED_TIME_AVAILABLE = INITIAL_TIME_AVAILABLE - REQUIRED_TIME - ROLE_CHANGE_TIME
-    // setrolechangetime(UPDATED_TIME_AVAILABLE.toFixed(2))
-
-    // if (PlanMt) {
-    //   const REQUIRED_TIME = PlanMt / PROHR
-    //   setTimeRequired(REQUIRED_TIME.toFixed(2))
-
-    //   let UPDATED_TIME_AVAILABLE
-    //   if (roleChange) {
-    //     // If roleChange is selected, only consider role change time
-    //     UPDATED_TIME_AVAILABLE = INITIAL_TIME_AVAILABLE - REQUIRED_TIME - ROLE_CHANGE_TIME
-    //   } else {
-    //     // Otherwise, consider initial time available minus required time and role change time
-    //     UPDATED_TIME_AVAILABLE = 0
-    //   }
-
-    //   setrolechangetime(UPDATED_TIME_AVAILABLE.toFixed(2))
-    // }
-
-    // const PQ2 = parseFloat(pq2)
-    // const PQ2WT = WEIGTH * PQ2
-    // setPQ2Wt(PQ2WT)
-
-    // const OPEN = parseFloat(Open)
-    // setOpenWt(OPENWT)
-
-    // const JOINT = parseFloat(joint)
-    // const JOINTWT = WEIGTH * JOINT
-    // setJointWt(JOINTWT)
-
-    // const CQ = parseFloat(cq)
-    // const CQWT = WEIGTH * CQ
-    // setCQWt(CQWT)
-
-    // const ODTRIM = parseFloat(odTrim)
-    // const TESTEND = parseFloat(testEnd)
-    // const COILTRIM = parseFloat(coilTrim)
-
-    // const PROFTD = PRIMEWT + OPENWT + JOINTWT + CQWT + ODTRIM + TESTEND + COILTRIM
-
     // setProdFTD(PROFTD.toFi*ed(2))
   }, [
     odSize,
     Thick,
     Weigth,
+    WorkHours,
     Length,
     Speed,
     TimeAvailable,
     rolechangetime,
     roleChange,
     TimeRequired,
-    // PrimeNos,
-    // pq2,
-    // open,
-    // joint,
-    // cq,
-    // odTrim,
-    // prodFTD,
     PlanMt,
     ProdHr,
   ])
@@ -544,25 +657,10 @@ const DailyProdPlan = () => {
         TimeRequired: TimeRequired,
         // SlitNos: SlitNos,
         PlanMt: PlanMt,
-        // PrimeNos: PrimeNos,
-        // PrimeWt: PrimeWt,
-        // PQ2: pq2,
-        // PQ2Wt: pq2Wt,
-        // Open: open,
-        // OpenWt: openWt,
-        // Joint: joint,
-        // JointWt: jointWt,
-        // CQ: cq,
-        // CQWt: cqWt,
-        // OdTrim: odTrim,
-        // TestEnd: testEnd,
-        // CoilTrim: coilTrim,
-        // ProdFTD: prodFTD,
-        // Yeilds: yeilds,
-        // Target: target,
         Date: Date,
         roleChange: roleChange,
         rolechangetime: rolechangetime,
+        status: 'Pending',
         // Sracp: Scrap,
       }
 
@@ -588,23 +686,8 @@ const DailyProdPlan = () => {
         setRoleChange('')
         // setSlitNos('')
         setPlanMt('')
-        // setPrimeNos('')
-        // setPrimeWt('')
-        // setPQ2('')
-        // setPQ2Wt('')
-        // setOpen('')
-        // setOpenWt('')
-        // setJoint('')
-        // setJointWt('')
-        // setCQ('')
-        // setCQWt('')
-        // setOdTrim('')
-        // setTestEnd('')
-        // setCoilTrim('')
-        // setProdFTD('')
-        // setYeilds('')
-        // setTarget('')
         setDate('')
+        setStatus('')
         // setScrap('')
 
         // Display success message
@@ -618,11 +701,6 @@ const DailyProdPlan = () => {
       // Handle error or show a user-friendly message
     }
   }
-
-  // const handleRoleChange = (e) => {
-  //   const selectedValue = e.target.value
-  //   const label = selectedValue ? `${selectedValue} [${selectedValue}]` : ''
-  //   setRoleChange(label)
   // }
 
   const vars = {
@@ -631,36 +709,12 @@ const DailyProdPlan = () => {
 
   const [selectedPlant, setSelectedPlant] = useState('')
 
-  // const handlePlantChange = (event) => {
-  //   setSelectedPlant(event.target.value)
-  //   console.log(selectedPlant)
-  // }
-
   return (
     <div>
       <div className="row">
         <div className="col-md-3">
           <h4 style={{ marginBottom: '1rem', color: '#002244' }}>Daily Production Plan</h4>
         </div>
-        {/* <div className="col-md-3">
-          <select
-            className="form-control"
-            style={{
-              backgroundColor: '#002244',
-              color: 'white',
-            }}
-            // onChange={(e) => setproductionPlanNo(e.target.value)}
-            value={Plant}
-            onChange={handleSubmit}
-          >
-            <option value="">Select Plant</option>
-            <option value="TM-01">TM-01</option>
-            <option value="TM-02">TM-02</option>
-            <option value="TM-03">TM-03</option>
-          </select>
-        </div> */}
-        {/* <div className="row">
-          <div className="col-md-4"> */}
         <div className="col-3">
           <NavLink to="/dailyprodplandata">
             <button
@@ -679,7 +733,11 @@ const DailyProdPlan = () => {
         {/* </div> */}
       </div>
       <form
-        onSubmit={handleSubmit}
+        // onSubmit={handleSubmit}
+        onSubmit={(e) => {
+          e.preventDefault() // Prevents the default form submission behavior
+          addEntry() // Add the current entry to the state
+        }}
         style={{
           marginBottom: '2rem',
           border: '1p* solid #ccc',
@@ -744,16 +802,6 @@ const DailyProdPlan = () => {
           <div className="col-md-4">
             <div className="mb-3">
               <label className="form-label">Size</label>
-              {/* <input
-                type="te*t"
-                className="form-control"
-                name="Size"
-                id="Size"
-                required
-                // placeholder="Size"
-                value={selectedSize}
-                onChange={(e) => handleSizeChange(e.target.value)}
-              /> */}
               <select
                 className="form-select"
                 name="Size"
@@ -848,20 +896,6 @@ const DailyProdPlan = () => {
               </select>
             </div>
           </div>
-          {/* <div className="col-md-4">
-            <div className="mb-3">
-              <label className="form-label">Size</label>
-              <input
-                type="te*t"
-                className="form-control"
-                name="Size"
-                id="Size"
-                // placeholder="Size"
-                value={selectedSize}
-                onChange={(e) => handleSizeChange(e.target.value)}
-              />
-            </div>
-          </div> */}
         </div>
         <div className="row">
           <div className="col-md-4">
@@ -872,6 +906,7 @@ const DailyProdPlan = () => {
                 className="form-control"
                 name="Od"
                 id="Od"
+                readOnly
                 // placeholder="Od"
                 value={odSize}
                 onChange={(e) => setodSize(e.target.value)}
@@ -887,6 +922,7 @@ const DailyProdPlan = () => {
                 className="form-control"
                 name="Speed"
                 id="Speed"
+                readOnly
                 // placeholder="Speed"
                 value={Speed}
                 onChange={(e) => setSpeed(e.target.value)}
@@ -921,7 +957,7 @@ const DailyProdPlan = () => {
         <div className="row">
           <div className="col-md-4">
             <div className="mb-3">
-              <label className="form-label">Length</label>
+              <label className="form-label">Length in Meter</label>
               <input
                 type="number"
                 className="form-control"
@@ -942,6 +978,7 @@ const DailyProdPlan = () => {
                 className="form-control"
                 name="Weigth"
                 id="Weigth"
+                readOnly
                 required
                 value={Weigth}
                 onChange={(e) => setWeigth(e.target.value)}
@@ -957,6 +994,7 @@ const DailyProdPlan = () => {
                 className="form-control"
                 name="ProdHr"
                 id="ProdHr"
+                readOnly
                 required
                 // placeholder="ProdHr"
                 value={ProdHr}
@@ -982,29 +1020,40 @@ const DailyProdPlan = () => {
           </div>
           <div className="col-md-4">
             <div className="mb-3">
+              <label className="form-label">Select Work Hours</label>
+              <select
+                className="form-control"
+                name="WorkHours"
+                id="WorkHours"
+                // placeholder="Coil type"
+                value={WorkHours}
+                required
+                onChange={(e) => setWorkHours(e.target.value)}
+              >
+                <option value="" disabled selected>
+                  Select WorkHours
+                </option>
+
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+              </select>
+            </div>
+          </div>
+          <div className="col-md-4">
+            <div className="mb-3">
               <label className="form-label">Time Available</label>
               <input
                 type="number"
                 className="form-control"
                 name="TimeAvailable"
                 id="TimeAvailable"
+                readOnly
                 required
                 value={TimeAvailable}
                 onChange={(e) => setTimeAvailable(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="col-md-4">
-            <div className="mb-3">
-              <label className="form-label">Time Required</label>
-              <input
-                type="number"
-                className="form-control"
-                name="TimeRequired"
-                id="TimeRequired"
-                // placeholder="TimeRequired"
-                value={TimeRequired}
-                onChange={(e) => setTimeRequired(e.target.value)}
               />
             </div>
           </div>
@@ -1022,6 +1071,21 @@ const DailyProdPlan = () => {
               // margin: '20p*',
             }}
           >
+            <div className="col-md-4">
+              <div className="mb-3">
+                <label className="form-label">Time Required</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  name="TimeRequired"
+                  id="TimeRequired"
+                  readOnly
+                  // placeholder="TimeRequired"
+                  value={TimeRequired}
+                  onChange={(e) => setTimeRequired(e.target.value)}
+                />
+              </div>
+            </div>
             <div className="col-md-4">
               <div className="mb-3">
                 <label className="form-label">Role Chnage</label>
@@ -1061,7 +1125,7 @@ const DailyProdPlan = () => {
         <div className="row">
           <div className="col-md-4">
             <div className="mb-3">
-              <button
+              {/* <button
                 type="submit"
                 className="btn"
                 style={{
@@ -1072,11 +1136,46 @@ const DailyProdPlan = () => {
                 }}
               >
                 Save
+              </button> */}
+              <button
+                type="submit"
+                className="btn"
+                style={{
+                  backgroundColor: '#002244',
+                  color: 'white',
+                  paddingLeft: '3rem',
+                  paddingRight: '3rem',
+                }}
+              >
+                Add Entry
               </button>
             </div>
           </div>
         </div>
       </form>
+      <div className="col-md-4">
+        <div className="mb-3">
+          <button
+            type="button"
+            className="btn"
+            style={{
+              backgroundColor: '#002244',
+              color: 'white',
+              paddingLeft: '3rem',
+              paddingRight: '3rem',
+            }}
+            onClick={saveAllEntries}
+          >
+            Save All Entries
+          </button>
+        </div>
+      </div>
+      {status && (
+        <div className={`status-message ${status === 'Pending' ? 'pending' : 'error'}`}>
+          {status === 'Pending' ? 'Saving entries...' : 'Failed to save entries. Please try again.'}
+        </div>
+      )}
+      {productionPlanTable}
     </div>
   )
 }

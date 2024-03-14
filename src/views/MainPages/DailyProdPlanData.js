@@ -8,6 +8,7 @@ const DailyProdPlanData = () => {
   const [motherCoil, setMotherCoil] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
   const [filteredData, setFilteredData] = useState([])
+  const [WorkHours, setWorkHours] = useState('')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,6 +53,7 @@ const DailyProdPlanData = () => {
       PlanMt: item.PlanMt,
       PrimeNos: item.PrimeNos,
       PrimeWt: item.PrimeWt,
+      status: item.status,
     }))
 
     if (exportData.length === 0) {
@@ -90,6 +92,15 @@ const DailyProdPlanData = () => {
 
     setFilteredData(filteredByDate)
   }
+  useEffect(() => {
+    // Update filteredData based on the search term
+    const filteredByDate = data.filter((item) => {
+      const formattedDate = formatDate(item.Date).toLowerCase()
+      return formattedDate.includes(searchTerm.toLowerCase())
+    })
+
+    setFilteredData(filteredByDate)
+  }, [data, searchTerm])
 
   return (
     <div>
@@ -136,9 +147,7 @@ const DailyProdPlanData = () => {
           )}
         </div>
       </div>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
+      {filteredData && Array.isArray(filteredData) ? (
         <div className="table-responsive">
           <table className="table table-bordered table-hover">
             <thead className="table-dark">
@@ -158,38 +167,38 @@ const DailyProdPlanData = () => {
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>PlanMt</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>TimeRequired</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>TimeAvailable</th>
-                {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>TimeRequired</th> */}
+                <th style={{ backgroundColor: '#002244', color: 'white' }}>WorkHours</th>
                 {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>SlitNos</th> */}
                 {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>PlanMt</th> */}
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Role Change Time</th>
-                {/* <th style={{ backgroundColor: '#002244', color: 'white' }}></th> */}
+                <th style={{ backgroundColor: '#002244', color: 'white' }}>Status</th>
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((item) => (
-                <tr key={item._id.$oid}>
-                  <td>{item.Plant}</td>
-                  <td>{item.productionPlanNo}</td>
-                  <td>{new Date(item.Date).toLocaleDateString()}</td>
-                  <td>{item.Size}</td>
-                  <td>{item.Thick}</td>
-                  <td>{item.odSize}</td>
+              {filteredData.map((entry, index) => (
+                <tr key={index._id}>
+                  <td>{entry.Plant}</td>
+                  {/* <td>{entry.productionPlanNo}</td> */}
+                  <td>{new Date(entry.Date).toLocaleDateString()}</td>
+                  <td>{entry.Size}</td>
+                  <td>{entry.Thick}</td>
+                  <td>{entry.odSize}</td>
                   {/* <td>{item.Thick}</td> */}
-                  <td>{item.Length}</td>
-                  <td>{item.Gr}</td>
-                  <td>{item.Weigth}</td>
-                  <td>{item.Speed}</td>
-                  <td>{item.ProdHr}</td>
-                  <td>{item.PlanMt}</td>
+                  <td>{entry.Length}</td>
+                  <td>{entry.Gr}</td>
+                  <td>{entry.Weigth}</td>
+                  <td>{entry.Speed}</td>
+                  <td>{entry.ProdHr}</td>
+                  <td>{entry.PlanMt}</td>
                   {/* <td>{item.TimeAvailable}</td> */}
-                  <td>{item.TimeRequired}</td>
-                  <td>{item.TimeAvailable}</td>
-                  {/* <td>{item.SlitNos}</td> */}
-                  {/* <td>{item.PlanMt}</td> */}
+                  <td>{entry.TimeRequired}</td>
+                  <td>{entry.TimeAvailable}</td>
+                  <td>{entry.WorkHours}</td>
                   <td>
-                    {item.roleChange === '1.5' ? 'Part Role' : ''}
-                    {item.roleChange === '3' ? 'Full Role' : ''}{' '}
+                    {entry.roleChange === '1.5' ? 'Part Role' : ''}
+                    {entry.roleChange === '3' ? 'Full Role' : ''}{' '}
                   </td>
+                  <td>{entry.status}</td>
                   {/* <td>
                     <NavLink
                       to={`/dailyprodreport/${filteredData._id}`}
@@ -203,7 +212,10 @@ const DailyProdPlanData = () => {
             </tbody>
           </table>
         </div>
+      ) : (
+        <p>No data to display</p>
       )}
+      {/* )} */}
     </div>
   )
 }

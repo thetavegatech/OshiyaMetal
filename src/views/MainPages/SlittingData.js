@@ -128,7 +128,7 @@ const SlittingData = () => {
           <tr>
             <th style={{ backgroundColor: '#002244', color: 'white' }}>MotherCoil No</th>
             {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>Slitting Sr No</th> */}
-            <th style={{ backgroundColor: '#002244', color: 'white' }}>combinedId</th>
+            <th style={{ backgroundColor: '#002244', color: 'white' }}>Slit Id</th>
             <th style={{ backgroundColor: '#002244', color: 'white' }}>SlitWidth</th>
             <th style={{ backgroundColor: '#002244', color: 'white' }}>NoOfSlit </th>
             {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>No of Slit</th> */}
@@ -136,9 +136,6 @@ const SlittingData = () => {
             <th style={{ backgroundColor: '#002244', color: 'white' }}>WT/MM</th>
             <th style={{ backgroundColor: '#002244', color: 'white' }}>Slit Weight</th>
             <th style={{ backgroundColor: '#002244', color: 'white' }}>Total Weight</th>
-            <th style={{ backgroundColor: '#002244', color: 'white' }}>Trimm</th>
-            <th style={{ backgroundColor: '#002244', color: 'white' }}>Scrap</th>
-            <th style={{ backgroundColor: '#002244', color: 'white' }}>SlitCut</th>
             {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>remaining weight</th> */}
 
             {/* <th>Scrap</th>
@@ -150,16 +147,13 @@ const SlittingData = () => {
           {slittingData.map((item) => (
             <tr key={item._id}>
               <td>{item.MotherCoilId}</td>
-              <td>{item.combinedId}</td>
+              <td>{item.SlitId}</td>
               <td>{item.SlitWidth}</td>
               <td>{item.NoOfSlit}</td>
               <td>{item.OdSize}</td>
               <td>{item.WTMM}</td>
               <td>{item.SlitWeigth}</td>
               <td>{item.TotalWeigth}</td>
-              <td>{item.Trimm}</td>
-              <td>{item.Scrap}</td>
-              <td>{item.Slitcut}</td>
               {/* <td>{item.remainingWeightValue}</td> */}
               {/* <td>
                 <NavLink to={`/editdailyplan/${item._id}`}>

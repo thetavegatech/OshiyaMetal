@@ -167,7 +167,9 @@ export default function EditUser() {
     try {
       const { MotherCoilId } = userData
 
-      const response = await axios.post('http://localhost:5001/api/saveEntries', { MotherCoilId })
+      const response = await axios.post('http://localhost:5001/api/saveEntries', {
+        MotherCoilId,
+      })
 
       console.log('Saved entries:', response.data)
 

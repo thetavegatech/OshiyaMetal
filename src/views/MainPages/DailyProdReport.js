@@ -38,6 +38,8 @@ const DailyProdReport = () => {
   const [target, setTarget] = useState('')
   const [Scrap, setScrap] = useState('')
   const [combinedIds, setCombinedIds] = useState([])
+  // const [productionPlanNos, setProductionPlanNos] = useState([]);
+  const [filteredProductionPlanNos, setFilteredProductionPlanNos] = useState([])
 
   // State for the selected combined ID
   // setOtherData
@@ -62,13 +64,14 @@ const DailyProdReport = () => {
   })
 
   useEffect(() => {
-    // Fetch production plan numbers when the component mounts
     const fetchProductionPlanNos = async () => {
       try {
-        const response = await axios.get(
-          'https://oshiyameatlbackend.onrender.com/api/getProductionPlanNos',
-        )
-        setProductionPlanNos(response.data) // Assuming the API returns an array of production plan numbers
+        const response = await axios.get('http://localhost:5001/api/getPendingProductionPlanNos')
+        const allProductionPlanNos = response.data
+        setProductionPlanNos(allProductionPlanNos)
+        // Filter production plan numbers based on status 'pending'
+        const pendingPlanNos = allProductionPlanNos.filter((plan) => plan.status === 'Pending')
+        setFilteredProductionPlanNos(pendingPlanNos)
       } catch (error) {
         console.error('Error fetching production plan numbers:', error)
       }
@@ -81,9 +84,7 @@ const DailyProdReport = () => {
     // Fetch combined IDs when the component mounts
     const fetchCombinedIds = async () => {
       try {
-        const response = await axios.get(
-          'https://oshiyameatlbackend.onrender.com/api/getCombinedIds',
-        )
+        const response = await axios.get('http://localhost:5001/api/getCombinedIds')
         setCombinedIds(response.data) // Assuming the API returns an array of combined IDs
       } catch (error) {
         console.error('Error fetching combined IDs:', error)
@@ -107,18 +108,42 @@ const DailyProdReport = () => {
   //   fetchProductionPlanNos()
   // }, [])
 
+  const [NoOfSlit, setNoOfSlit] = useState(0)
+  const [remainingSlits, setRemainingSlits] = useState('')
+  const [slitValue, setSlitValue] = useState('')
+  // Assuming you have a state variable to store valid combined IDs
+  const [validCombinedIds, setValidCombinedIds] = useState([])
+
+  // Modify your handleCombinedIdChange function
   const handleCombinedIdChange = async (e) => {
-    const combinedId = e.target.value
-    setSelectedCombinedId(combinedId)
+    const SlitId = e.target.value
+    setSelectedCombinedId(SlitId)
 
     try {
       // Make API call to fetch data based on the selected combined ID
-      const response = await axios.get(
-        `https://oshiyameatlbackend.onrender.com/api/getEntryByCombinedId/${combinedId}`,
-      )
+      const response = await axios.get(`http://localhost:5001/api/getEntryByCombinedId/${SlitId}`)
 
-      // Update state with the fetched data
-      setOtherData(response.data) // Adjust accordingly based on your data structure
+      // Check if the fetched data has NoOfSlit greater than 0
+      if (response.data.NoOfSlit > 0) {
+        // Update state with the fetched data
+        setOtherData(response.data) // Adjust accordingly based on your data structure
+
+        // Set actual number of slits
+        setNoOfSlit(response.data.NoOfSlit)
+
+        console.log('Actual Number of Slits:', response.data.NoOfSlit)
+
+        // Add the combinedId to the list of valid combined IDs if not already present
+        if (!validCombinedIds.includes(SlitId)) {
+          setValidCombinedIds((prevIds) => [...prevIds, SlitId])
+        }
+      } else {
+        // Handle the case where NoOfSlit is not greater than 0
+        console.log('No data available for the selected combined ID.')
+
+        // Show an alert for not having slits
+        alert('No slits available for the selected combined ID.')
+      }
     } catch (error) {
       console.error('Error fetching data:', error)
       // Handle error or show a user-friendly message
@@ -131,9 +156,7 @@ const DailyProdReport = () => {
 
     try {
       // Make API call to fetch data based on the selected productionPlanNo
-      const response = await axios.get(
-        `https://oshiyameatlbackend.onrender.com/api/dailyproplan/${productionPlanNo}`,
-      )
+      const response = await axios.get(`http://localhost:5001/api/dailyproplan/${productionPlanNo}`)
       const {
         Size,
         odSize,
@@ -180,6 +203,14 @@ const DailyProdReport = () => {
     if (name === 'SlitNos') {
       // Ensure that value is always a number
       const slitValue = parseFloat(value) || 0
+
+      // Calculate remaining number of slits
+      // const remainingSlits = NoOfSlit - slitValue
+
+      // console.log(remainingSlits)
+      // setRemainingSlits(remainingSlits)
+      // setSlitNos(slitValue)
+
       setSlitNos(slitValue)
     } else {
       // Update the state for the 'Size' field
@@ -200,23 +231,6 @@ const DailyProdReport = () => {
       }))
     }
   }
-
-  // const handleUpdate = async (e) => {
-  //   e.preventDefault()
-  //   try {
-  //     await axios.put(`http://localhost:5001/api/dailyproplan/${id}`, dailyProductionData)
-  //     // Clear form data after successful update
-  //     setDailyProductionData({
-  //       // ... other fields
-  //       Size: '',
-  //       Od: '',
-  //     })
-  //     // Navigate back to the previous page
-  //     navigate(-1)
-  //   } catch (error) {
-  //     console.error('Error updating production data:', error)
-  //   }
-  // }
 
   // New useEffect to fetch data when selectedProductionPlanNo changes
   useEffect(() => {
@@ -276,9 +290,9 @@ const DailyProdReport = () => {
         Weigth: dailyProductionData.Weigth,
         Speed: dailyProductionData.Speed,
         ProdHr: dailyProductionData.ProdHr,
-        // TimeAvailable: dailyProductionData.timeAvailable,
-        // TimeRequired: dailyProductionData.timeRequired,
         SlitNos: slitNos,
+        ActualSlits: NoOfSlit,
+        RemainingSlits: remainingSlits,
         PlanMt: dailyProductionData.PlanMt,
         PrimeNos: primeNos,
         PrimeWt: primeWt,
@@ -300,14 +314,35 @@ const DailyProdReport = () => {
         Scrap: Scrap,
       }
 
-      // Make API call to save data using Axios
-      const response = await axios.post(
-        'https://oshiyameatlbackend.onrender.com/api/saveproreport',
-        formData,
-      )
+      // Make API call to update the status and save data using Axios
+      const response = await axios.post('http://localhost:5001/api/saveproreport', formData)
 
       if (response.status === 200) {
         console.log('Data saved successfully:', response.data)
+
+        // Update the status to 'complete'
+        await axios.put(
+          `http://localhost:5001/updateProductionPlanStatus/${selectedProductionPlanNo}`,
+          {
+            status: 'Complete',
+          },
+        )
+
+        const remainingSlits = NoOfSlit - slitNos
+        console.log('Remaining Slits:', remainingSlits)
+        console.log('Remaining slitNos:', slitNos)
+        console.log('Remaining NoOfSlit:', NoOfSlit)
+        // Use the state update function and provide a callback to ensure the correct value
+        setNoOfSlit((prevNoOfSlit) => {
+          console.log('Before update - NoOfSlit:', prevNoOfSlit)
+          console.log('After update - NoOfSlit:', remainingSlits)
+          return remainingSlits
+        })
+
+        await axios.put(`http://localhost:5001/api/updateNoOfSlits/${selectedCombinedId}`, {
+          NoOfSlit: remainingSlits,
+        })
+
         // Clear all fields
         setSize(dailyProductionData.Size)
         setodSize(dailyProductionData.odSize)
@@ -317,9 +352,9 @@ const DailyProdReport = () => {
         setWeigth(dailyProductionData.Weigth)
         setSpeed(dailyProductionData.Speed)
         setProdHr(dailyProductionData.ProdHr)
-        // setTimeAvailable('')
-        // setTimeRequired('')
         setSlitNos('')
+        setNoOfSlit('')
+        setRemainingSlits('')
         setPlanMt(dailyProductionData.PlanMt)
         setPrimeNos('')
         setPrimeWt('')
@@ -405,6 +440,7 @@ const DailyProdReport = () => {
                 </option>
                 {/* Check if productionPlanNos is an array before mapping */}
                 {Array.isArray(productionPlanNos) &&
+                  // Array.status === 'Pending' &&
                   productionPlanNos.map((productionPlanNo) => (
                     <option key={productionPlanNo} value={productionPlanNo}>
                       {productionPlanNo}
@@ -426,9 +462,9 @@ const DailyProdReport = () => {
                 <option value="" disabled>
                   Select Combined ID
                 </option>
-                {combinedIds.map((combinedId) => (
-                  <option key={combinedId} value={combinedId}>
-                    {combinedId}
+                {combinedIds.map((slitId) => (
+                  <option key={slitId} value={slitId}>
+                    {slitId}
                   </option>
                 ))}
               </select>
@@ -436,21 +472,6 @@ const DailyProdReport = () => {
           </div>
         </div>
         <div className="row">
-          {/* <div className="col-md-4">
-            <div className="mb-3">
-              <label className="form-label">Date</label>
-              <input
-                type="date"
-                className="form-control"
-                name="date"
-                id="Date"
-                value={date} // Use the state variable for 'date'
-                onChange={(e) => setDate(e.target.value)}
-                // onChange={(e) => setDate(e.target.value)}
-                required
-              />
-            </div>
-          </div> */}
           <div className="col-md-4">
             <div className="mb-3">
               <label className="form-label">Size</label>
@@ -495,20 +516,6 @@ const DailyProdReport = () => {
           </div>
         </div>
         <div className="row">
-          {/* <div className="col-md-4">
-            <div className="mb-3">
-              <label className="form-label">Thick</label>
-              <input
-                type="number"
-                className="form-control"
-                name="Thick"
-                id="Thick"
-                required
-                value={dailyProductionData.Thick}
-                onChange={handleInputChange}
-              />
-            </div>
-          </div> */}
           <div className="col-md-4">
             <div className="mb-3">
               <label className="form-label">Length</label>
@@ -553,20 +560,6 @@ const DailyProdReport = () => {
           </div>
         </div>
         <div className="row">
-          {/* <div className="col-md-4">
-            <div className="mb-3">
-              <label className="form-label">Weigth</label>
-              <input
-                type="number"
-                className="form-control"
-                name="Weigth"
-                id="Weigth"
-                required
-                value={dailyProductionData.Weigth}
-                onChange={handleInputChange}
-              />
-            </div>
-          </div> */}
           <div className="col-md-4">
             <div className="mb-3">
               <label className="form-label">Speed</label>
@@ -610,50 +603,7 @@ const DailyProdReport = () => {
             </div>
           </div>
         </div>
-        <div className="row">
-          {/* <div className="col-md-4">
-            <div className="mb-3">
-              <label className="form-label">TimeAvailable</label>
-              <input
-                type="number"
-                className="form-control"
-                name="TimeAvailable"
-                id="TimeAvailable"
-                required
-                value={timeAvailable}
-                onChange={(e) => setTimeAvailable(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="col-md-4">
-            <div className="mb-3">
-              <label className="form-label">TimeRequired</label>
-              <input
-                type="number"
-                className="form-control"
-                name="TimeRequired"
-                id="TimeRequired"
-                placeholder="TimeRequired"
-                value={timeRequired}
-                onChange={(e) => setTimeRequired(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="col-md-4">
-            <div className="mb-3">
-              <label className="form-label">PlanMt</label>
-              <input
-                type="number"
-                className="form-control"
-                name="PlanMt"
-                id="PlanMt"
-                value={dailyProductionData.PlanMt}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-          </div> */}
-        </div>
+        <div className="row"></div>
         <div className="row" style={{ marginTop: '5rem' }}>
           <div className="col-md-4">
             <div className="mb-3">

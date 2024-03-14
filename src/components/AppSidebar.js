@@ -266,10 +266,18 @@ const AppSidebar = () => {
                   <CIcon customClassName="nav-icon" icon={cilSpeedometer} />
                   Daily Production Report
                 </CNavItem>
-                {/* <CNavItem component={NavLink} to="/dailyprodreportdata">
+                <CNavItem component={NavLink} to="/vehicle">
                   <CIcon customClassName="nav-icon" icon={cilSpeedometer} />
-                  Daily Prod Report Data
-                </CNavItem> */}
+                  Vehicle Tracking
+                </CNavItem>
+                <CNavItem component={NavLink} to="/breakdown">
+                  <CIcon customClassName="nav-icon" icon={cilSpeedometer} />
+                  Breakdown
+                </CNavItem>
+                <CNavItem component={NavLink} to="/breakdowntable">
+                  <CIcon customClassName="nav-icon" icon={cilSpeedometer} />
+                  Breakdown Table
+                </CNavItem>
               </>
             )
           } else if (userrole === 'production') {

@@ -23,7 +23,7 @@ const Register = () => {
     username: '',
     email: '',
     password: '',
-    mobileNo: '',
+    AllotedMachine: '',
     userRoll: '',
   })
   const [registrationSuccess, setRegistrationSuccess] = useState(false)
@@ -37,11 +37,11 @@ const Register = () => {
     e.preventDefault()
 
     try {
-      const response = await axios.post('https://oshiyameatlbackend.onrender.com/api/users', {
+      const response = await axios.post('http://localhost:5001/api/users', {
         name: formData.username,
         email: formData.email,
         password: formData.password,
-        mobileNO: formData.mobileNo,
+        AllotedMachine: formData.AllotedMachine,
         role: formData.userRoll,
       })
 
@@ -116,11 +116,11 @@ const Register = () => {
                       <CIcon icon={cilUser} />
                     </CInputGroupText>
                     <CFormInput
-                      name="mobileNo"
+                      name="AllotedMachine"
                       type="text"
-                      placeholder="Mobile Number"
-                      autoComplete="tel"
-                      value={formData.mobileNo}
+                      placeholder="AllotedMachine"
+                      // autoComplete="tel"
+                      value={formData.AllotedMachine}
                       onChange={handleChange}
                       required
                     />

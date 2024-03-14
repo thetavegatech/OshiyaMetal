@@ -178,7 +178,7 @@ const MotherCoilMaster = () => {
               className="form-control"
               name="SrNo"
               id="SrNo"
-              placeholder="Sr. No"
+              placeholder="Same as Mothercoil No"
               required
             />
           </div>
@@ -208,11 +208,13 @@ const MotherCoilMaster = () => {
           </div>
           <div className="col-md-4 mb-3">
             <label className="form-label">Thickness</label>
-            <select className="form-control" name="Thickness" id="Thickness" required>
-              <option>Select Thickness</option>
-              <option value="2.00">2.00</option>
-              <option value="1.20">1.20</option>
-            </select>
+            <input
+              type="number"
+              className="form-control"
+              name="Thickness"
+              id="Thickness"
+              required
+            />
           </div>
           <div className="col-md-4 mb-3">
             <label className="form-label">Weigth</label>
@@ -395,22 +397,28 @@ const MotherCoilMaster = () => {
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>ActualCoilWidth</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>ActualCoilWeigth</th>
                 <th style={{ backgroundColor: '#002244', color: 'white' }}>Date</th>
+                {/* <th style={{ backgroundColor: '#002244', color: 'white' }}>Cuts</th> */}
               </tr>
             </thead>
             <tbody>
-              {slittingData.map((coil) => (
-                <tr key={coil._id}>
-                  <td>{coil.MotherCoilId}</td>
-                  {/* <td>{coil.SrNo}</td> */}
-                  <td>{coil.CompanyName}</td>
-                  <td>{coil.Width}</td>
-                  <td>{coil.Thickness}</td>
-                  <td>{coil.Weigth}</td>
-                  <td>{coil.ActualCoilWidth}</td>
-                  <td>{coil.ActualCoilWeigth}</td>
-                  <td>{formatDate(coil.Date)}</td>
-                </tr>
-              ))}
+              {slittingData.map(
+                (coil) =>
+                  // Check if coil.Cut is not equal to "full-cut"
+                  coil.Cut !== 'full-cut' && (
+                    <tr key={coil._id}>
+                      <td>{coil.MotherCoilId}</td>
+                      {/* <td>{coil.SrNo}</td> */}
+                      <td>{coil.CompanyName}</td>
+                      <td>{coil.Width}</td>
+                      <td>{coil.Thickness}</td>
+                      <td>{coil.Weigth}</td>
+                      <td>{coil.ActualCoilWidth}</td>
+                      <td>{coil.ActualCoilWeigth}</td>
+                      <td>{formatDate(coil.Date)}</td>
+                      {/* <td>{coil.Cut}</td> */}
+                    </tr>
+                  ),
+              )}
             </tbody>
           </table>
         </div>
