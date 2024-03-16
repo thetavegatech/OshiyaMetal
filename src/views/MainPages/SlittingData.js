@@ -11,7 +11,7 @@ const SlittingData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/getEntries')
+        const response = await fetch('https://oshiyameatlbackend.onrender.com/api/getEntries')
         const result = await response.json()
 
         // Assuming each entry is nested within an "entries" property

@@ -31,7 +31,7 @@ export default function BreakDown() {
   useEffect(() => {
     // Fetch data from the API
     axios
-      .get('http://localhost:5001/api/breakdowns')
+      .get('https://oshiyameatlbackend.onrender.com/api/breakdowns')
       .then((response) => {
         if (response.data) {
           setBreakdownList(response.data)
@@ -67,7 +67,7 @@ export default function BreakDown() {
   const editStatus = (id) => {
     // Assume you have an API endpoint to update the status by breakdown ID
     axios
-      .put(`http://192.168.29.225:5001/api/breakdowns/${id}`, { Status: 'Complete' })
+      .put(`https://oshiyameatlbackend.onrender.com/api/breakdowns/${id}`, { Status: 'Complete' })
       .then((response) => {
         console.log('Status updated:', response.data)
 
@@ -98,7 +98,7 @@ export default function BreakDown() {
     const isConfirmed = window.confirm('Are you sure you want to delete this data?')
     if (isConfirmed) {
       axios
-        .delete(`http://192.168.29.225:5001/api/breakdowns/${id}`)
+        .delete(`https://oshiyameatlbackend.onrender.com/api/breakdowns/${id}`)
         .then((response) => {
           console.log('Data deleted:', response.data)
 
