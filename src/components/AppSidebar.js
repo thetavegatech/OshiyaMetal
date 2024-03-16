@@ -278,6 +278,10 @@ const AppSidebar = () => {
                   <CIcon customClassName="nav-icon" icon={cilSpeedometer} />
                   Breakdown Table
                 </CNavItem>
+                <CNavItem component={NavLink} to="/inventory">
+                  <CIcon customClassName="nav-icon" icon={cilSpeedometer} />
+                  Intventory
+                </CNavItem>
               </>
             )
           } else if (userrole === 'production') {

@@ -1,18 +1,18 @@
 import { apiSlice } from './apiSlice'
-const USERS_URL = 'http://localhost:5001/api/users'
+const USERS_URL = 'https://oshiyameatlbackend.onrender.com/api/users'
 
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (data) => ({
-        url: `${'http://localhost:5001/api/users'}/auth`,
+        url: `${'https://oshiyameatlbackend.onrender.com/api/users'}/auth`,
         method: 'POST',
         body: data,
       }),
     }),
     logout: builder.mutation({
       query: () => ({
-        url: `${'http://localhost:5001/api/users'}/logout`,
+        url: `${'https://oshiyameatlbackend.onrender.com/api/users'}/logout`,
         method: 'POST',
       }),
     }),

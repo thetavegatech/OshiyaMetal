@@ -25,7 +25,7 @@ const WeightMaster = () => {
     e.preventDefault()
 
     axios
-      .post('http://localhost:5001/api/weightmaster', {
+      .post('https://oshiyameatlbackend.onrender.com/api/weightmaster', {
         RST,
         EnterDate,
         VehicalName,
@@ -43,7 +43,9 @@ const WeightMaster = () => {
         resetForm()
         const fetchData = async () => {
           try {
-            const response = await fetch('http://localhost:5001/api/getweightdata')
+            const response = await fetch(
+              'https://oshiyameatlbackend.onrender.com/api/getweightdata',
+            )
             const result = await response.json()
             setData(result)
           } catch (error) {
@@ -73,7 +75,7 @@ const WeightMaster = () => {
     // Fetch data from your API endpoint
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/getweightdata')
+        const response = await fetch('https://oshiyameatlbackend.onrender.com/api/getweightdata')
         const result = await response.json()
         setData(result)
       } catch (error) {

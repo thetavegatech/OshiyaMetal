@@ -34,7 +34,7 @@
 //   useEffect(() => {
 //     const fetchData1 = async () => {
 //       try {
-//         const response = await axios.get('http://localhost:5001/api/allSrNos')
+//         const response = await axios.get('https://oshiyameatlbackend.onrender.com/api/allSrNos')
 //         setSrNos(response.data)
 //       } catch (error) {
 //         console.error('Error fetching SrNos:', error)
@@ -50,7 +50,7 @@
 //   }
 //   const fetchData = async (selected) => {
 //     try {
-//       const response = await fetch(`http://localhost:5001/api/data/srno/${selected}`)
+//       const response = await fetch(`https://oshiyameatlbackend.onrender.com/api/data/srno/${selected}`)
 //       const result = await response.json()
 //       setMotherCoilId(result.MotherCoilId || '')
 //       setThickness(result.Thickness || '')
@@ -174,7 +174,7 @@
 
 //     // Send the data to the backend API
 //     // try {
-//     //   await axios.post('http://localhost:5001/api/updatebymothercoil', {
+//     //   await axios.post('https://oshiyameatlbackend.onrender.com/api/updatebymothercoil', {
 //     //     motherCoilId: selectedSrNo, // Use selectedSrNo or MotherCoilId based on your requirement
 //     //     cut: Slitcut,
 //     //   })
@@ -205,7 +205,7 @@
 //   const handleSaveData = async () => {
 //     try {
 //       // Make sure to adjust the API endpoint and payload based on your backend requirements
-//       const response = await axios.post('http://localhost:5001/api/saveEntries', {
+//       const response = await axios.post('https://oshiyameatlbackend.onrender.com/api/saveEntries', {
 //         MotherCoilId: selectedSrNo, // Use selectedSrNo or MotherCoilId based on your requirement
 //         entries: slitsData,
 //       })
@@ -213,7 +213,7 @@
 //       console.log('Data saved successfully:', response.data)
 //       setSaveSuccessMessage('Data saved successfully')
 
-//       const res = await axios.post('http://localhost:5001/api/updatebymothercoil', {
+//       const res = await axios.post('https://oshiyameatlbackend.onrender.com/api/updatebymothercoil', {
 //         motherCoilId: selectedSrNo, // Use selectedSrNo or MotherCoilId based on your requirement
 //         cut: Slitcut,
 //         Trimm: dataItem.Trimm,
@@ -615,7 +615,7 @@ const SlittingMaster = () => {
   useEffect(() => {
     const fetchData1 = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/allSrNos')
+        const response = await axios.get('https://oshiyameatlbackend.onrender.com/api/allSrNos')
         setSrNos(response.data)
       } catch (error) {
         console.error('Error fetching SrNos:', error)
@@ -631,7 +631,9 @@ const SlittingMaster = () => {
   }
   const fetchData = async (selected) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/data/srno/${selected}`)
+      const response = await fetch(
+        `https://oshiyameatlbackend.onrender.com/api/data/srno/${selected}`,
+      )
       const result = await response.json()
       setMotherCoilId(result.MotherCoilId || '')
       setThickness(result.Thickness || '')
@@ -657,7 +659,7 @@ const SlittingMaster = () => {
   const handleAddSlitsData = () => {
     if (!MotherCoilId || !SlitWidth || !NoOfSlit) {
       // Show a message to enter the required data
-      console.log('Please enter all required data.')
+      alert('Please enter all slit data.')
       return
     }
     const newEntry = {
@@ -692,7 +694,7 @@ const SlittingMaster = () => {
   const handletrimmscrap = () => {
     if (!Trimm || !Scrap) {
       // Show a message to enter both Trimm and Scrap data
-      console.log('Please enter both Trimm and Scrap data.')
+      alert('Please enter both Trimm and Scrap data.')
       return
     }
     const newItem = { Trimm, Scrap }
@@ -755,7 +757,7 @@ const SlittingMaster = () => {
 
     // Send the data to the backend API
     // try {
-    //   await axios.post('http://localhost:5001/api/updatebymothercoil', {
+    //   await axios.post('https://oshiyameatlbackend.onrender.com/api/updatebymothercoil', {
     //     motherCoilId: selectedSrNo, // Use selectedSrNo or MotherCoilId based on your requirement
     //     cut: Slitcut,
     //   })
@@ -786,7 +788,7 @@ const SlittingMaster = () => {
   const handleSaveData = async () => {
     try {
       // Make sure to adjust the API endpoint and payload based on your backend requirements
-      const response = await axios.post('http://localhost:5001/api/saveEntries', {
+      const response = await axios.post('https://oshiyameatlbackend.onrender.com/api/saveEntries', {
         MotherCoilId: selectedSrNo, // Use selectedSrNo or MotherCoilId based on your requirement
         entries: slitsData,
       })
@@ -794,15 +796,18 @@ const SlittingMaster = () => {
       console.log('Data saved successfully:', response.data)
       setSaveSuccessMessage('Data saved successfully')
 
-      const res = await axios.post('http://localhost:5001/api/updatebymothercoil', {
-        motherCoilId: selectedSrNo, // Use selectedSrNo or MotherCoilId based on your requirement
-        cut: Slitcut,
-        Trimm: dataItem.Trimm,
-        Scrap: dataItem.Scrap,
-        UsedWeigth: totaloftotalweight,
-      })
+      const res = await axios.post(
+        'https://oshiyameatlbackend.onrender.com/api/updatebymothercoil',
+        {
+          motherCoilId: selectedSrNo, // Use selectedSrNo or MotherCoilId based on your requirement
+          cut: Slitcut,
+          Trimm: dataItem.Trimm,
+          Scrap: dataItem.Scrap,
+          UsedWeigth: totaloftotalweight,
+        },
+      )
 
-      console.log('Data saved successfully:', res.data)
+      alert('Data saved successfully:', res.data)
       setSaveSuccessMessage('Data saved successfully')
 
       // Handle the response or update UI based on your requirements

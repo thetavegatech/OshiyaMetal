@@ -66,7 +66,9 @@ const DailyProdReport = () => {
   useEffect(() => {
     const fetchProductionPlanNos = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/getPendingProductionPlanNos')
+        const response = await axios.get(
+          'https://oshiyameatlbackend.onrender.com/api/getPendingProductionPlanNos',
+        )
         const allProductionPlanNos = response.data
         setProductionPlanNos(allProductionPlanNos)
         // Filter production plan numbers based on status 'pending'
@@ -84,7 +86,9 @@ const DailyProdReport = () => {
     // Fetch combined IDs when the component mounts
     const fetchCombinedIds = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/getCombinedIds')
+        const response = await axios.get(
+          'https://oshiyameatlbackend.onrender.com/api/getCombinedIds',
+        )
         setCombinedIds(response.data) // Assuming the API returns an array of combined IDs
       } catch (error) {
         console.error('Error fetching combined IDs:', error)
@@ -98,7 +102,7 @@ const DailyProdReport = () => {
   //   // Fetch production plan numbers when the component mounts
   //   const fetchProductionPlanNos = async () => {
   //     try {
-  //       const response = await axios.get('http://localhost:5001/api/getProductionPlanNos')
+  //       const response = await axios.get('https://oshiyameatlbackend.onrender.com/api/getProductionPlanNos')
   //       setProductionPlanNo(response.data) // Assuming the API returns an array of production plan numbers
   //     } catch (error) {
   //       console.error('Error fetching production plan numbers:', error)
@@ -121,7 +125,9 @@ const DailyProdReport = () => {
 
     try {
       // Make API call to fetch data based on the selected combined ID
-      const response = await axios.get(`http://localhost:5001/api/getEntryByCombinedId/${SlitId}`)
+      const response = await axios.get(
+        `https://oshiyameatlbackend.onrender.com/api/getEntryByCombinedId/${SlitId}`,
+      )
 
       // Check if the fetched data has NoOfSlit greater than 0
       if (response.data.NoOfSlit > 0) {
@@ -156,7 +162,9 @@ const DailyProdReport = () => {
 
     try {
       // Make API call to fetch data based on the selected productionPlanNo
-      const response = await axios.get(`http://localhost:5001/api/dailyproplan/${productionPlanNo}`)
+      const response = await axios.get(
+        `https://oshiyameatlbackend.onrender.com/api/dailyproplan/${productionPlanNo}`,
+      )
       const {
         Size,
         odSize,
@@ -315,14 +323,17 @@ const DailyProdReport = () => {
       }
 
       // Make API call to update the status and save data using Axios
-      const response = await axios.post('http://localhost:5001/api/saveproreport', formData)
+      const response = await axios.post(
+        'https://oshiyameatlbackend.onrender.com/api/saveproreport',
+        formData,
+      )
 
       if (response.status === 200) {
         console.log('Data saved successfully:', response.data)
 
         // Update the status to 'complete'
         await axios.put(
-          `http://localhost:5001/updateProductionPlanStatus/${selectedProductionPlanNo}`,
+          `https://oshiyameatlbackend.onrender.com/updateProductionPlanStatus/${selectedProductionPlanNo}`,
           {
             status: 'Complete',
           },
@@ -339,9 +350,12 @@ const DailyProdReport = () => {
           return remainingSlits
         })
 
-        await axios.put(`http://localhost:5001/api/updateNoOfSlits/${selectedCombinedId}`, {
-          NoOfSlit: remainingSlits,
-        })
+        await axios.put(
+          `https://oshiyameatlbackend.onrender.com/api/updateNoOfSlits/${selectedCombinedId}`,
+          {
+            NoOfSlit: remainingSlits,
+          },
+        )
 
         // Clear all fields
         setSize(dailyProductionData.Size)

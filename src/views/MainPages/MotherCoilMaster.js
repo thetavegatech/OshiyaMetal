@@ -15,7 +15,9 @@ const MotherCoilMaster = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/getallmothercoildata')
+        const response = await axios.get(
+          'https://oshiyameatlbackend.onrender.com/api/getallmothercoildata',
+        )
         setData(response.data)
         setMotherCoil(response.data)
         setSlittingData(response.data)
@@ -48,7 +50,7 @@ const MotherCoilMaster = () => {
     const UsedWeigth = 0
 
     axios
-      .post('http://localhost:5001/api/mothercoils', {
+      .post('https://oshiyameatlbackend.onrender.com/api/mothercoils', {
         MotherCoilId: MotherCoilId,
         SrNo: SrNo,
         CompanyName: CompanyName,
@@ -68,7 +70,9 @@ const MotherCoilMaster = () => {
 
         const fetchData = async () => {
           try {
-            const response = await axios.get('http://localhost:5001/api/getallmothercoildata')
+            const response = await axios.get(
+              'https://oshiyameatlbackend.onrender.com/api/getallmothercoildata',
+            )
             setSlittingData(response.data)
           } catch (error) {
             console.error('Error fetching data:', error)

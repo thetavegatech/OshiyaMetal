@@ -30,7 +30,7 @@ export default function BreakDown() {
   useEffect(() => {
     // Fetch data from the API
     axios
-      .get('http://localhost:5001/api/breakdowns')
+      .get('https://oshiyameatlbackend.onrender.com/api/breakdowns')
       .then((response) => {
         if (response.data) {
           setBreakdownList(response.data)
@@ -135,7 +135,7 @@ export default function BreakDown() {
     const username = e.target.username?.value
     // const deliveryDate = e.target.deliveryDate?.value
     axios
-      .post('http://localhost:5001/api/breakdowns', {
+      .post('https://oshiyameatlbackend.onrender.com/api/breakdowns', {
         machineName: machineName,
         breakdownType: breakdownType,
         breakdownReason: breakdownReason,

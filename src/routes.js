@@ -1,5 +1,6 @@
 import React from 'react'
 import BreakDown from './views/MainPages/Breakdown'
+import Inventory from './views/MainPages/Inventory'
 
 const Login = React.lazy(() => import('./views/pages/login/Login'))
 const Logout = React.lazy(() => import('./views/pages/Logout'))
@@ -99,6 +100,11 @@ const routes = [
     path: '/breakdowntable',
     name: 'BreakdownTable',
     element: BreakdownTable,
+  },
+  {
+    path: '/inventory',
+    name: 'Inventory',
+    element: Inventory,
   },
 ]
 

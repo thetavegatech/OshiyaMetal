@@ -11,7 +11,7 @@ const TaskRecord = () => {
 
     // Fetching data based on the breakdown ID
     axios
-      .get(`http://localhost:5001/getId/${id}`)
+      .get(`https://oshiyameatlbackend.onrender.com/getId/${id}`)
       .then((response) => {
         // Assuming the API response has an 'Image' property
         setImageData(response.data.Image)

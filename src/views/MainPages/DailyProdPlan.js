@@ -41,7 +41,9 @@ const DailyProdPlan = () => {
   useEffect(() => {
     const fetchProductionPlanData = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/getdailyproplandata')
+        const response = await axios.get(
+          'https://oshiyameatlbackend.onrender.com/api/getdailyproplandata',
+        )
         if (response.status === 200) {
           setProductionPlanData(response.data)
         } else {
@@ -127,7 +129,10 @@ const DailyProdPlan = () => {
   const saveAllEntries = async () => {
     try {
       // Make API call to save all entries using axios
-      const response = await axios.post('http://localhost:5001/api/saveproplan', entries)
+      const response = await axios.post(
+        'https://oshiyameatlbackend.onrender.com/api/saveproplan',
+        entries,
+      )
 
       if (response.status === 200) {
         console.log('All entries saved successfully:', response.data)
@@ -665,7 +670,10 @@ const DailyProdPlan = () => {
       }
 
       // Make API call to save data using A*ios
-      const response = await axios.post('http://localhost:5001/api/saveproplan', formData)
+      const response = await axios.post(
+        'https://oshiyameatlbackend.onrender.com/api/saveproplan',
+        formData,
+      )
 
       if (response.status === 200) {
         console.log('Data saved successfully:', response.data)

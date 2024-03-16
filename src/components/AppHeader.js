@@ -157,7 +157,7 @@ const AppHeader = () => {
           <CNavItem>
             <h6>Welcome, {username}</h6>
             <h6>Role : {userrole}</h6>
-            <h6>Alloted machine : {AllotedMachine}</h6>
+            {/* <h6>Alloted machine : {AllotedMachine}</h6> */}
             {/* <CIcon icon={cilUser} /> */}
           </CNavItem>
           {/* <CNavItem>
