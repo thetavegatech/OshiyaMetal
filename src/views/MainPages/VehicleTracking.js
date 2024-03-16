@@ -23,7 +23,7 @@ const MotherCoilMaster = () => {
 
   useEffect(() => {
     // Fetch data from the API
-    fetch('https://oshiyameatlbackend.onrender.com/vehicletracking')
+    fetch('http://localhost:5001/vehicletracking')
       .then((response) => response.json())
       .then((result) => {
         // Check if the request was successful (success property is true) and if data is an array
@@ -63,7 +63,7 @@ const MotherCoilMaster = () => {
     const status = e.target.status?.value
     const deliveryDate = e.target.deliveryDate?.value
     axios
-      .post('https://oshiyameatlbackend.onrender.com/vehicletracking', {
+      .post('http://localhost:5001/vehicletracking', {
         vehicleNo: vehicleNo,
         totalNOPrime: totalNOPrime,
         customerDetails: customerDetails,
